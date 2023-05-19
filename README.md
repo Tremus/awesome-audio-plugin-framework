@@ -54,6 +54,7 @@ Dual & multi licensing schemes usually default to a kind of GPL and offer a cond
 | Base64             | [CHOC](https://github.com/Tracktion/choc)                              | ISC      | Base64 string encode/decode                           |
 | Regex              | [hyperscan](https://github.com/intel/hyperscan)                        | BSD3     | Regex pattern matching                                |
 | File/folder window | [tinyfiledialogs](https://github.com/samhocevar/portable-file-dialogs) | WTFPL    | Native select file/folder dialogue boxes              |
+| JUCE               | [JUCE](https://github.com/juce-framework/JUCE)                         | ISC      | JUCE is an open-source cross-platform C++ application framework for desktop and mobile applications, including VST, VST3, AU, AUv3, RTAS and AAX audio plug-ins.              |
 
 ## TODO
 
