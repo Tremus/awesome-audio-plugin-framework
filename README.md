@@ -33,7 +33,8 @@ Dual & multi licensing schemes usually default to a kind of GPL and offer a cond
 | Regex              | [PCRE2](https://github.com/PCRE2Project/pcre2)                       | Dual      | Regex pattern matching                                                                                                                                         |
 | Regex              | [tiny-regex-c](https://github.com/kokke/tiny-regex-c)                | Unlicense | Regex pattern matching                                                                                                                                         |
 | File/folder window | [tinyfiledialogs](https://sourceforge.net/projects/tinyfiledialogs/) | zlib      | Native select file/folder dialogue boxes, alerts, colour picker & more                                                                                         |
-| Binary embed       | [bin2c](https://github.com/adobe/bin2c)                              | Apache 2  | CLI for turning files (eg. a font or image) into a `.c` containg a `const char[]`.                                                                             |
+| Binary embed       | [bin2c](https://github.com/adobe/bin2c)                              | Apache 2  | CLI. Turns single file (eg. font, image) into `.c` containg `const char[]`.                                                                                    |
+| Binary embed       | [c-embed](https://github.com/weigert/c-embed)                        | MIT       | CLI. Turns multiple files (eg. font, image) into single `.o`. Access in code using virtual file system                                                         |
 
 ## C++
 
