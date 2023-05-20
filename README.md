@@ -37,25 +37,25 @@ Dual & multi licensing schemes usually default to a kind of GPL and offer a cond
 
 ## C++
 
-| Function           | Name                                                                   | License  | Description                                           |
-| ------------------ | ---------------------------------------------------------------------- | -------- | ----------------------------------------------------- |
-| Window             | [CrossWindow](https://github.com/alaingalvan/CrossWindow)              | zlib     | Native window with mouse & keyboard callbacks.        |
-| VST3               | [ vst3_public_sdk](https://github.com/steinbergmedia/vst3_public_sdk)  | Dual     | VST3 wrapper                                          |
-| AU                 | [ vst3_public_sdk](https://github.com/steinbergmedia/vst3_public_sdk)  | Dual     | AU wrapper via a VST3 wrapper wrapper                 |
-| AUv3               | [ vst3_public_sdk](https://github.com/steinbergmedia/vst3_public_sdk)  | Dual     | AUv3 wrapper via a VST3 wrapper wrapper               |
-| AAX                | [ vst3_public_sdk](https://github.com/steinbergmedia/vst3_public_sdk)  | Dual     | AAX wrapper via a VST3 wrapper wrapper                |
-| VST3               | [clap-wrapper](https://github.com/free-audio/clap-wrapper)             | Multi    | VST3 wrapper via a CLAP wrapper                       |
-| File read/write    | [cppfs](https://github.com/cginternals/cppfs)                          | MIT      | Manage local, virtual and remote files                |
-| Audio codecs       | [CHOC](https://github.com/Tracktion/choc)                              | ISC      | Decode/encode WAV, FLAC, Ogg-Vorbis, decode only MP3. |
-| MIDI parsing       | [CHOC](https://github.com/Tracktion/choc)                              | ISC      | Parse MIDI messages, MIDI sequences and MIDI files.   |
-| MIDI/Audio sync    | [CHOC](https://github.com/Tracktion/choc)                              | ISC      | Splits an audio block to match times of MIDI events   |
-| FFT                | [KFR](https://github.com/kfrlib/kfr)                                   | Dual     | Splits an audio block to match times of MIDI events   |
-| Lock free queue    | [readerwriterqueue](https://github.com/cameron314/readerwriterqueue)   | BSD      | Splits an audio block to match times of MIDI events   |
-| Timer thread       | [CHOC](https://github.com/Tracktion/choc)                              | ISC      | Timed callbacks                                       |
-| Machine ID         | [machineid](https://github.com/Tarik02/machineid)                      | Apache 2 | Generates a unique string based on users hardware     |
-| Base64             | [CHOC](https://github.com/Tracktion/choc)                              | ISC      | Base64 string encode/decode                           |
-| Regex              | [hyperscan](https://github.com/intel/hyperscan)                        | BSD3     | Regex pattern matching                                |
-| File/folder window | [tinyfiledialogs](https://github.com/samhocevar/portable-file-dialogs) | WTFPL    | Native select file/folder dialogue boxes              |
+| Function           | Name                                                                         | License  | Description                                           |
+| ------------------ | ---------------------------------------------------------------------------- | -------- | ----------------------------------------------------- |
+| Window             | [CrossWindow](https://github.com/alaingalvan/CrossWindow)                    | zlib     | Native window with mouse & keyboard callbacks.        |
+| VST3               | [ vst3_public_sdk](https://github.com/steinbergmedia/vst3_public_sdk)        | Dual     | VST3 wrapper                                          |
+| AU                 | [ vst3_public_sdk](https://github.com/steinbergmedia/vst3_public_sdk)        | Dual     | AU wrapper via a VST3 wrapper wrapper                 |
+| AUv3               | [ vst3_public_sdk](https://github.com/steinbergmedia/vst3_public_sdk)        | Dual     | AUv3 wrapper via a VST3 wrapper wrapper               |
+| AAX                | [ vst3_public_sdk](https://github.com/steinbergmedia/vst3_public_sdk)        | Dual     | AAX wrapper via a VST3 wrapper wrapper                |
+| VST3               | [clap-wrapper](https://github.com/free-audio/clap-wrapper)                   | Multi    | VST3 wrapper via a CLAP wrapper                       |
+| File read/write    | [cppfs](https://github.com/cginternals/cppfs)                                | MIT      | Manage local, virtual and remote files                |
+| Audio codecs       | [CHOC](https://github.com/Tracktion/choc)                                    | ISC      | Decode/encode WAV, FLAC, Ogg-Vorbis, decode only MP3. |
+| MIDI parsing       | [CHOC](https://github.com/Tracktion/choc)                                    | ISC      | Parse MIDI messages, MIDI sequences and MIDI files.   |
+| MIDI/Audio sync    | [CHOC](https://github.com/Tracktion/choc)                                    | ISC      | Splits an audio block to match times of MIDI events   |
+| FFT                | [KFR](https://github.com/kfrlib/kfr)                                         | Dual     | Splits an audio block to match times of MIDI events   |
+| Lock free queue    | [readerwriterqueue](https://github.com/cameron314/readerwriterqueue)         | BSD      | Splits an audio block to match times of MIDI events   |
+| Timer thread       | [CHOC](https://github.com/Tracktion/choc)                                    | ISC      | Timed callbacks                                       |
+| Machine ID         | [machineid](https://github.com/Tarik02/machineid)                            | Apache 2 | Generates a unique string based on users hardware     |
+| Base64             | [CHOC](https://github.com/Tracktion/choc)                                    | ISC      | Base64 string encode/decode                           |
+| Regex              | [hyperscan](https://github.com/intel/hyperscan)                              | BSD3     | Regex pattern matching                                |
+| File/folder window | [Portable File Dialogs](https://github.com/samhocevar/portable-file-dialogs) | WTFPL    | Native select file/folder dialogue boxes              |
 
 ## TODO
 
