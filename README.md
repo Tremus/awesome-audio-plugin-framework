@@ -52,8 +52,8 @@ Dual & multi licensing schemes usually default to a kind of GPL and offer a cond
 | Audio codecs       | [CHOC](https://github.com/Tracktion/choc)                                    | ISC      | Decode/encode WAV, FLAC, Ogg-Vorbis, decode only MP3. |
 | MIDI parsing       | [CHOC](https://github.com/Tracktion/choc)                                    | ISC      | Parse MIDI messages, MIDI sequences and MIDI files.   |
 | MIDI/Audio sync    | [CHOC](https://github.com/Tracktion/choc)                                    | ISC      | Splits an audio block to match times of MIDI events   |
-| FFT                | [KFR](https://github.com/kfrlib/kfr)                                         | Dual     | Splits an audio block to match times of MIDI events   |
-| Lock free queue    | [readerwriterqueue](https://github.com/cameron314/readerwriterqueue)         | BSD      | Splits an audio block to match times of MIDI events   |
+| FFT                | [KFR](https://github.com/kfrlib/kfr)                                         | Dual     | Really fast FFTs.                                     |
+| Lock free queue    | [readerwriterqueue](https://github.com/cameron314/readerwriterqueue)         | BSD      | Does queue. No lock                                   |
 | Timer thread       | [CHOC](https://github.com/Tracktion/choc)                                    | ISC      | Timed callbacks                                       |
 | Machine ID         | [machineid](https://github.com/Tarik02/machineid)                            | Apache 2 | Generates a unique string based on users hardware     |
 | Base64             | [CHOC](https://github.com/Tracktion/choc)                                    | ISC      | Base64 string encode/decode                           |
