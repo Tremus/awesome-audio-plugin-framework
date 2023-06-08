@@ -4,11 +4,11 @@ Curated list of small C/C++ libraries for building your own custom audio plugin 
 
 Small libraries usually follow the [Unix philosophy](https://en.wikipedia.org/wiki/Unix_philosophy#Do_One_Thing_and_Do_It_Well), making them more maintainable, replaceable, and flexible in how they are used. Frameworks, by definition, break this philosophy.
 
-This lists aims to support Windows, MacOS, and usually Linux. iOS, Android and Emscripten are not actively supported (open to any PRs!).
+This lists aims to support Windows, MacOS, and usually Linux. iOS, Android and Emscripten are not actively supported.
 
 ## Licensing
 
-Dual & multi licensing schemes usually default to a kind of GPL and offer a conditional alternative. Sometimes it requiring a fee, sometimes it's due to a dependancy, which may be replaceable. Visit their repos and websites to learn about exact conditions.
+Any license labelled Dual or Multi usually defaults to a kind of GPL but with a conditional alternative. Sometimes it requires a fee, sometimes it's due to a dependancy, which may be replaceable. Visit their repos and websites to learn about exact conditions.
 
 ## C
 
@@ -22,7 +22,7 @@ Dual & multi licensing schemes usually default to a kind of GPL and offer a cond
 | File stream        | [sokol](https://github.com/floooh/sokol)                             | zlib      | Read & write stream for local files. See `sokol_fetch.h`                                                                                                       |
 | Log                | [sokol](https://github.com/floooh/sokol)                             | zlib      | Log to console or file. See `sokol_log.h`                                                                                                                      |
 | Log                | [stb](https://github.com/nothings/stb)                               | MIT       | Fast log to console. See `stb_sprintf.h`                                                                                                                       |
-| Audio thread       | [sokol](https://github.com/floooh/sokol)                             | zlib      | Spins up an audio thread with buffer to write to. See `sokol_log.h`                                                                                            |
+| Audio thread       | [sokol](https://github.com/floooh/sokol)                             | zlib      | Spins up an audio thread with buffer to write to. See `sokol_audio.h`                                                                                          |
 | HTTPS              | [curl](https://github.com/curl/curl)                                 | BSD like  | Makes HTTPS requests                                                                                                                                           |
 | Time               | [sokol](https://github.com/floooh/sokol)                             | zlib      | Get & parse high resolution time. See `sokol_time.h`                                                                                                           |
 | Image codecs       | [stb](https://github.com/nothings/stb)                               | MIT       | Load/decode JPG, PNG, TGA, BMP, PSD, GIF, HDR, PIC from file & memory. See `stb_image.h`, `stb_image_resize.h`, `stb_image_write.h`                            |
@@ -43,15 +43,16 @@ Dual & multi licensing schemes usually default to a kind of GPL and offer a cond
 | Function           | Name                                                                         | License  | Description                                           |
 | ------------------ | ---------------------------------------------------------------------------- | -------- | ----------------------------------------------------- |
 | Window             | [CrossWindow](https://github.com/alaingalvan/CrossWindow)                    | zlib     | Native window with mouse & keyboard callbacks.        |
-| VST3               | [ vst3_public_sdk](https://github.com/steinbergmedia/vst3_public_sdk)        | Dual     | VST3 wrapper                                          |
-| AU                 | [ vst3_public_sdk](https://github.com/steinbergmedia/vst3_public_sdk)        | Dual     | AU wrapper via a VST3 wrapper wrapper                 |
-| AUv3               | [ vst3_public_sdk](https://github.com/steinbergmedia/vst3_public_sdk)        | Dual     | AUv3 wrapper via a VST3 wrapper wrapper               |
-| AAX                | [ vst3_public_sdk](https://github.com/steinbergmedia/vst3_public_sdk)        | Dual     | AAX wrapper via a VST3 wrapper wrapper                |
+| VST3               | [vst3_public_sdk](https://github.com/steinbergmedia/vst3_public_sdk)         | Dual     | VST3 wrapper                                          |
+| AU                 | [vst3_public_sdk](https://github.com/steinbergmedia/vst3_public_sdk)         | Dual     | AU wrapper via a VST3 wrapper wrapper                 |
+| AUv3               | [vst3_public_sdk](https://github.com/steinbergmedia/vst3_public_sdk)         | Dual     | AUv3 wrapper via a VST3 wrapper wrapper               |
+| AAX                | [vst3_public_sdk](https://github.com/steinbergmedia/vst3_public_sdk)         | Dual     | AAX wrapper via a VST3 wrapper wrapper                |
 | VST3               | [clap-wrapper](https://github.com/free-audio/clap-wrapper)                   | Multi    | VST3 wrapper via a CLAP wrapper                       |
 | File read/write    | [cppfs](https://github.com/cginternals/cppfs)                                | MIT      | Manage local, virtual and remote files                |
 | Audio codecs       | [CHOC](https://github.com/Tracktion/choc)                                    | ISC      | Decode/encode WAV, FLAC, Ogg-Vorbis, decode only MP3. |
 | MIDI parsing       | [CHOC](https://github.com/Tracktion/choc)                                    | ISC      | Parse MIDI messages, MIDI sequences and MIDI files.   |
 | MIDI/Audio sync    | [CHOC](https://github.com/Tracktion/choc)                                    | ISC      | Splits an audio block to match times of MIDI events   |
+| Log                | [fast_io](https://github.com/cppfastio/fast_io)                              | MIT      | \<iostream\> replacement with threadsafe options      |
 | FFT                | [KFR](https://github.com/kfrlib/kfr)                                         | Dual     | Really fast FFTs.                                     |
 | Lock free queue    | [readerwriterqueue](https://github.com/cameron314/readerwriterqueue)         | BSD      | Does queue. No lock                                   |
 | Timer thread       | [CHOC](https://github.com/Tracktion/choc)                                    | ISC      | Timed callbacks                                       |
