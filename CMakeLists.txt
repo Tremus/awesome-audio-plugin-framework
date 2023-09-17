@@ -13,3 +13,4 @@ add_subdirectory(modules/tinycthread)
 
 add_subdirectory(examples/open_file_dialog)
 add_subdirectory(examples/save_file_dialog)
+add_subdirectory(examples/tweetnacl)
