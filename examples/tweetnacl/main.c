@@ -66,67 +66,63 @@ int main()
     // Here we will pretend to be Alice, sending a message to Bob
     // She needs:
     // 1. A NONCE
-    unsigned char nonce[crypto_box_NONCEBYTES];
-    randombytes(nonce, sizeof(nonce));
+    unsigned char anonce[crypto_box_NONCEBYTES];
+    randombytes(anonce, sizeof(anonce));
     // 2. i/o buffers
-    size_t bufsize     = msize + crypto_box_ZEROBYTES;
-    unsigned char* in  = malloc(bufsize);
-    unsigned char* out = malloc(bufsize);
+    size_t abufsize     = msize + crypto_box_ZEROBYTES;
+    unsigned char* ain  = malloc(abufsize);
+    unsigned char* aout = malloc(abufsize);
     // 3. Fill input buffer with Alice's message, padded with 32 zeros
-    memset(in, 0, crypto_box_ZEROBYTES);
-    memcpy(in + crypto_box_ZEROBYTES, msg, msize);
+    memset(ain, 0, crypto_box_ZEROBYTES);
+    memcpy(ain + crypto_box_ZEROBYTES, msg, msize);
 
     // Encrypt alice encrypts message using Bobs public key
-    int result = crypto_box(out, in, bufsize, nonce, bob_pub, alice_sec);
+    int result = crypto_box(aout, ain, abufsize, anonce, bob_pub, alice_sec);
     printf("Result: %d\n", result);
-    printf("Encrypted message: %s\n", out + crypto_box_BOXZEROBYTES);
+    printf("Encrypted message: %s\n", aout + crypto_box_BOXZEROBYTES);
 
     // Presumably Alice's message will be saved to a file or sent over a
     // network. The message should consist of a NONCE part and encrypted message
     // part. Because the NONCE is a fixed size, she'll simply prefix her message
     // with the nonce.
-    size_t esize = bufsize - crypto_box_BOXZEROBYTES + crypto_box_NONCEBYTES;
+    size_t esize = abufsize - crypto_box_BOXZEROBYTES + crypto_box_NONCEBYTES;
     unsigned char* emsg = malloc(esize);
-    memcpy(emsg, nonce, crypto_box_NONCEBYTES); // prefix
+    memcpy(emsg, anonce, crypto_box_NONCEBYTES); // prefix
     memcpy(
         emsg + crypto_box_NONCEBYTES,
-        out + crypto_box_BOXZEROBYTES,
+        aout + crypto_box_BOXZEROBYTES,
         esize - crypto_box_NONCEBYTES);
     // This example will not save any files, but you would use emsg & esize
     // in your fopen/fwrite calls.
 
-    free(out);
-    free(in);
-    in      = 0;
-    out     = 0;
-    bufsize = 0;
-    memset(nonce, 0, sizeof(nonce));
-
     // Now we will pretend to be Bob, who will decrypt Alice's message.
     // Bob only has knowledge of emsg, esize, and Alices public key.
     // He needs:
-    // 1. The NONCE, which is Alice prefixed in her message
-    memcpy(nonce, emsg, crypto_box_NONCEBYTES);
+    // 1. The NONCE, which Alice prefixed in her message
+    unsigned char bnonce[crypto_box_NONCEBYTES];
+    memcpy(bnonce, emsg, crypto_box_NONCEBYTES);
     // 2. i/o buffers
-    bufsize = esize - crypto_box_NONCEBYTES + crypto_box_BOXZEROBYTES;
-    in      = malloc(bufsize);
-    out     = malloc(bufsize);
+    size_t bbufsize = esize - crypto_box_NONCEBYTES + crypto_box_BOXZEROBYTES;
+    unsigned char* bin  = malloc(bbufsize);
+    unsigned char* bout = malloc(bbufsize);
     // The enrypted message, formatted with 16 padded zeros
-    memset(in, 0, crypto_box_BOXZEROBYTES);
+    memset(bin, 0, crypto_box_BOXZEROBYTES);
     memcpy(
-        in + crypto_box_BOXZEROBYTES,
+        bin + crypto_box_BOXZEROBYTES,
         emsg + crypto_box_NONCEBYTES,
         esize - crypto_box_NONCEBYTES);
 
-    result = crypto_box_open(out, in, bufsize, nonce, alice_pub, bob_sec);
+    result = crypto_box_open(bout, bin, bbufsize, bnonce, alice_pub, bob_sec);
     printf("Result: %d\n", result);
-    printf("Decrypted message: %s\n", out + crypto_box_ZEROBYTES);
+    printf("Decrypted message: %s\n", bout + crypto_box_ZEROBYTES);
 
     // Hoorah!
 
     free(emsg);
-    free(out);
-    free(in);
+    free(bout);
+    free(bin);
+    free(aout);
+    free(ain);
 
     return 0;
 }
