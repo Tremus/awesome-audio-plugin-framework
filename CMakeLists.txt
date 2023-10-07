@@ -11,6 +11,7 @@ add_subdirectory(modules/tinycthread)
 
 #### BUILD EXAMPLES ####
 
+add_subdirectory(examples/https_curl)
 add_subdirectory(examples/open_file_dialog)
 add_subdirectory(examples/save_file_dialog)
 add_subdirectory(examples/tweetnacl)
