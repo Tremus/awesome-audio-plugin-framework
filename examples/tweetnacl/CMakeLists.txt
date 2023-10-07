@@ -1,2 +1,2 @@
 cmake_minimum_required(VERSION 3.15)
-add_executable(tweetnacl main.c tweetnacl.c)
+add_executable(tweetnacl main.c tweetnacl.c base64.c)
