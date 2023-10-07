@@ -5,6 +5,10 @@
 #include <string.h>
 #include <unistd.h>
 
+//Include an implementation to convert message to base 64 so 
+//encoded messages are shown as characters only.
+#include "base64.h"
+
 static int fd = -1;
 
 // TweetNaCl makes you provide your own randomBytes implementation.
@@ -54,13 +58,35 @@ int main()
     const char* msg = "Alice's secret message!";
     size_t msize    = strlen(msg);
 
+    //Create keypairs
     crypto_box_keypair(alice_pub, alice_sec);
     crypto_box_keypair(bob_pub, bob_sec);
 
-    printf("Alice public key: %s\n", alice_pub);
-    printf("Alice secret key: %s\n", alice_sec);
-    printf("Bob public key: %s\n", bob_pub);
-    printf("Bob secret key: %s\n", bob_sec);
+    //Base 64 constants (Used for displaying as string)
+    int public_encode_len = Base64encode_len(crypto_box_PUBLICKEYBYTES);
+    int secret_encode_len = Base64encode_len(crypto_box_SECRETKEYBYTES);
+    
+    //Display Alice public key
+    char alice_pub_enc[public_encode_len];
+    Base64encode(alice_pub_enc, (const char*)alice_pub, crypto_box_PUBLICKEYBYTES);
+    printf("Alice public key: %s\n", alice_pub_enc);
+
+    //Display Alice secret key
+    char alice_sec_enc[secret_encode_len];
+    Base64encode(alice_sec_enc, (const char*)alice_sec, crypto_box_PUBLICKEYBYTES);
+    printf("Alice secret key: %s\n", alice_sec_enc);
+
+    //Display Bob public key
+    char bob_pub_enc[public_encode_len];
+    Base64encode(bob_pub_enc, (const char*)bob_pub, crypto_box_PUBLICKEYBYTES);
+    printf("Bob public key: %s\n", bob_pub_enc);
+
+    //Display Bob secret key
+    char bob_sec_enc[secret_encode_len];
+    Base64encode(bob_sec_enc, (const char*)bob_sec, crypto_box_PUBLICKEYBYTES);
+    printf("Bob secret key: %s\n", bob_sec_enc);
+    
+    //Display message
     printf("Message: %s\n", msg);
 
     // Here we will pretend to be Alice, sending a message to Bob
@@ -78,8 +104,12 @@ int main()
 
     // Encrypt alice encrypts message using Bobs public key
     int result = crypto_box(aout, ain, abufsize, anonce, bob_pub, alice_sec);
+    //Display as base 64
+    int enc_len = Base64encode_len(abufsize);
+    char aout_enc[enc_len];
+    Base64encode(aout_enc, (const char *)aout, abufsize);
     printf("Result: %d\n", result);
-    printf("Encrypted message: %s\n", aout + crypto_box_BOXZEROBYTES);
+    printf("Encrypted message: %s\n", aout_enc);
 
     // Presumably Alice's message will be saved to a file or sent over a
     // network. The message should consist of a NONCE part and encrypted message
