@@ -1,4 +1,5 @@
-#include "libcurl_scu.c"
+#define CURL_STATICLIB
+#include <curl/curl.h>
 
 #include <stdatomic.h>
 #include <stdbool.h>

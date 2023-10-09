@@ -7,3 +7,5 @@ A single compilation unit is used with all the right defaults for super fast & c
 Currently the Release build produces an executable size of ~432kb on MacOS, ~372 on Windows. On MacOS you will double that size if you target arm64 & x86_64.
 
 If you change any settings and produce a smaller build, please let me know!
+
+NOTE: If you build libcurl as a static library, you must have `CURL_STATICLIB` defined before including `curl/curl.h`. If not, do not define `CURL_STATICLIB`.
