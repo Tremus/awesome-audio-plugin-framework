@@ -7,8 +7,4 @@ An advantage of cute_tls to libcurl is the ease of building and reduced binary s
 
 A disadvantage to libcurl is the complexity of sending requests (for now)
 
-TODO: add POST request example
-
-TODO: create really easy GET & POST functions similar to libcurl
-
 TODO: build for Windows

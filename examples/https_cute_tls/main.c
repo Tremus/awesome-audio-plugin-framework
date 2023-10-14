@@ -3,14 +3,80 @@
 
 #include "picohttpparser.h"
 
-int main()
+struct https_response
 {
-    const char* hostname = "www.google.com";
-    // const char* hostname = "badssl.com";
-    // const char* hostname = "expired.badssl.com";
-    // const char* hostname = "wrong.host.badssl.com";
-    // const char* hostname = "self-signed.badssl.com";
-    // const char* hostname = "untrusted-root.badssl.com";
+    char*  buffer;
+    size_t size;
+    size_t capacity;
+
+    int status_code;
+    int body_offset; // body = buffer + body_offset
+
+    // Array of string views
+    size_t             num_headers;
+    struct phr_header* headers;
+};
+
+void https_free(struct https_response* res)
+{
+    if (res->buffer != NULL)
+        free(res->buffer);
+}
+
+void https_read_response(struct https_response* res, TLS_Connection* conn)
+{
+    res->capacity = TLS_MAX_RECORD_SIZE * 2;
+    res->buffer   = malloc(res->capacity + TLS_1_KB);
+    while (1)
+    {
+        if (tls_process(*conn) == TLS_STATE_DISCONNECTED)
+            break;
+
+        if ((res->size + TLS_MAX_RECORD_SIZE) >= res->capacity)
+        {
+            size_t grow_amt = res->capacity > TLS_MAX_RECORD_SIZE ? res->capacity : TLS_MAX_RECORD_SIZE;
+            res->capacity   += grow_amt;
+            res->buffer     = realloc(res->buffer, res->capacity + TLS_1_KB);
+        }
+
+        int num_bytes_read = tls_read(*conn, res->buffer + res->size, TLS_MAX_PACKET_SIZE);
+        if (num_bytes_read < 0)
+        {
+            tls_disconnect(*conn);
+            printf("Failed reading bytes.\n");
+            return;
+        }
+        res->size += num_bytes_read;
+    }
+    tls_disconnect(*conn);
+    res->capacity += TLS_1_KB;
+
+    int         version;
+    const char* msg;
+    size_t      msg_len;
+
+    // If we don't allocate enough headers, phr_parse_response won't return the offset to our response body
+    // We already have at least 1kb padded memory allocated in our response buffer
+    // Use remaining memory to store headers (at least 1kb / 32bytes = 32 headers)
+    res->num_headers = (res->capacity - res->size) / sizeof(struct phr_header);
+    res->headers     = (struct phr_header*)(res->buffer + res->size + (res->size % 8));
+
+    res->body_offset = phr_parse_response(
+        res->buffer,
+        res->size,
+        &version,
+        &res->status_code,
+        &msg,
+        &msg_len,
+        res->headers,
+        &res->num_headers,
+        0);
+}
+
+struct https_response https_get(const char* hostname, const char* pathname)
+{
+    struct https_response res;
+    memset(&res, 0, sizeof(res));
 
     TLS_Connection connection = tls_connect(hostname, 443);
 
@@ -24,82 +90,122 @@ int main()
         else if (state < 0)
         {
             printf("Error connecting to to %s with code %s.\n", hostname, tls_state_string(state));
-            return -1;
+            return res;
         }
     }
 
-    printf("Connected!\n");
-
     // Send GET request.
     char req[1024];
-    int  req_len = sprintf(req, "GET / HTTP/1.1\r\nHost: %s\r\nConnection: close\r\n\r\n", hostname);
+    int  req_len = sprintf(req, "GET %s HTTP/1.1\r\nHost: %s\r\nConnection: close\r\n\r\n", pathname, hostname);
     if (tls_send(connection, req, req_len) < 0)
     {
         tls_disconnect(connection);
         printf("Failed to send data.\n");
-        return -1;
+        return res;
     }
 
-    size_t bytes_received  = 0;
-    size_t bytes_allocated = 0;
-    char*  buf             = NULL;
+    https_read_response(&res, &connection);
+    return res;
+}
+
+struct https_response https_post(const char* hostname, const char* path, const char* content_type, const char* data)
+{
+    struct https_response res;
+    memset(&res, 0, sizeof(res));
+
+    TLS_Connection connection = tls_connect(hostname, 443);
+
     while (1)
     {
         TLS_State state = tls_process(connection);
-        if (state == TLS_STATE_DISCONNECTED)
+        if (state == TLS_STATE_CONNECTED)
         {
             break;
         }
-
-        if ((bytes_received + TLS_MAX_PACKET_SIZE) > bytes_allocated)
+        else if (state < 0)
         {
-            bytes_allocated += TLS_MAX_PACKET_SIZE;
-            // +1 so we can add a NULL termination
-            buf = realloc(buf, bytes_allocated + 1);
-        }
-
-        int num_bytes_read = tls_read(connection, buf + bytes_received, sizeof(buf));
-        if (num_bytes_read < 0)
-        {
-            tls_disconnect(connection);
-            printf("Failed reading bytes.\n");
-            return -1;
-        }
-        if (num_bytes_read)
-        {
-            bytes_received += num_bytes_read;
+            printf("Error connecting to to %s with code %s.\n", hostname, tls_state_string(state));
+            return res;
         }
     }
-    tls_disconnect(connection);
-    buf[bytes_received] = '\0'; // NULL termination
 
-    int total = bytes_received; // in 2023, C still cannot reliably format a size_t on all systems
-    printf("Received %d bytes\n", total);
+    char req[1024];
+    int  req_len = sprintf(
+        req,
+        "POST %s HTTP/1.1\r\nHost: %s\r\nConnection: close\r\nAccept: */*\r\nContent-Type: "
+         "%s\r\nContent-Length:%d\r\n\r\n%s",
+        path,
+        hostname,
+        content_type,
+        (int)strlen(data),
+        data);
+    assert(req_len < 1024);
 
-    int               version, status;
-    const char*       msg;
-    size_t            msg_len;
-    size_t            num_headers = 8;
-    struct phr_header headers[num_headers];
-    phr_parse_response(buf, bytes_received, &version, &status, &msg, &msg_len, headers, &num_headers, 0);
-
-    printf("Message:");
-    printf(msg);
-    total = msg_len;
-    printf("Message len: %d bytes\n", total);
-
-    printf("Version: %d\n", version);
-    printf("Status: %d\n", status);
-    total = num_headers;
-    printf("Num headers: %d\n", total);
-    for (size_t i = 0; i < num_headers; i++)
+    if (tls_send(connection, req, req_len) < 0)
     {
-        char text[32];
-        snprintf(text, 32, "%s", headers[i].name);
-        printf(text);
-        snprintf(text, 32, "%s", headers[i].value);
-        printf(text);
+        tls_disconnect(connection);
+        printf("Failed to send data.\n");
+        return res;
     }
+
+    https_read_response(&res, &connection);
+    return res;
+}
+
+void print_response(struct https_response* res)
+{
+    // In 2023, C still cannot reliably format a size_t on all systems
+    printf("Bytes received %d\n", (int)res->size);
+    printf("Bytes remaining %d\n", (int)(res->capacity - res->size));
+
+    printf("Status code: %d\n", res->status_code);
+
+    printf("Num headers: %d\n", (int)res->num_headers);
+    for (size_t i = 0; i < res->num_headers; i++)
+    {
+        struct phr_header* h = &res->headers[i];
+
+        fwrite(h->name, h->name_len, 1, stdout);
+        printf(": ");
+        fwrite(h->value, h->value_len, 1, stdout);
+        printf("\n");
+    }
+
+    printf("Response body\n");
+    if (res->body_offset > 0)
+        fwrite(res->buffer + res->body_offset, res->size - res->body_offset, 1, stdout);
+}
+
+int main()
+{
+    const char* get_hostname = "jsonplaceholder.typicode.com";
+    const char* get_pathname = "/posts/1";
+
+    printf("GET - %s%s\n", get_hostname, get_pathname);
+    struct https_response res = https_get(get_hostname, get_pathname);
+
+    if (res.status_code == 0)
+    {
+        printf("Failed GET\n");
+        return -1;
+    }
+    print_response(&res);
+    https_free(&res);
+
+    const char* post_hostname = "jsonplaceholder.typicode.com";
+    const char* post_pathname = "/posts";
+    const char* content_type  = "application/json";
+    const char* data          = "{\"message\": \"hello\"}";
+
+    printf("\nPOST - %s%s\n", post_hostname, post_pathname);
+    res = https_post(post_hostname, post_pathname, content_type, data);
+
+    if (res.status_code == 0)
+    {
+        printf("Failed POST\n");
+        return -1;
+    }
+    print_response(&res);
 
     return 0;
 }
