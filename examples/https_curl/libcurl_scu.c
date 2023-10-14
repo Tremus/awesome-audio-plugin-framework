@@ -5,6 +5,7 @@
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
 #define BUILDING_LIBCURL
+// Remove CURL_STATICLIB if you're using libcurl_scu.c inside another scu
 #define CURL_STATICLIB
 
 // lib/curl_config.h

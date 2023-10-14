@@ -7,3 +7,6 @@
 [submodule "modules/curl"]
 	path = modules/curl
 	url = https://github.com/curl/curl
+[submodule "modules/cute_headers"]
+	path = modules/cute_headers
+	url = https://github.com/RandyGaul/cute_headers
