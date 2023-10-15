@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #define CUTE_TLS_IMPLEMENTATION
 #include <cute_tls.h>
 
@@ -49,6 +50,8 @@ void https_read_response(struct https_response* res, TLS_Connection* conn)
         res->size += num_bytes_read;
     }
     tls_disconnect(*conn);
+    // NULL terminate our response body. Makes it more compatible with C functions
+    res->buffer[res->size++] = '\0';
     res->capacity += TLS_1_KB;
 
     int         version;
@@ -96,7 +99,13 @@ struct https_response https_get(const char* hostname, const char* pathname)
 
     // Send GET request.
     char req[1024];
-    int  req_len = sprintf(req, "GET %s HTTP/1.1\r\nHost: %s\r\nConnection: close\r\n\r\n", pathname, hostname);
+    int  req_len = sprintf(
+        req,
+        "GET %s HTTP/1.1\r\n"
+        "Host: %s\r\n"
+        "Connection: close\r\n\r\n",
+        pathname,
+        hostname);
     if (tls_send(connection, req, req_len) < 0)
     {
         tls_disconnect(connection);
@@ -132,8 +141,14 @@ struct https_response https_post(const char* hostname, const char* path, const c
     char req[1024];
     int  req_len = sprintf(
         req,
-        "POST %s HTTP/1.1\r\nHost: %s\r\nConnection: close\r\nAccept: */*\r\nContent-Type: "
-         "%s\r\nContent-Length:%d\r\n\r\n%s",
+        "POST %s HTTP/1.1\r\n"
+        "Host: %s\r\n"
+        "Connection: close\r\n"
+        "Accept: */*\r\n"
+        "Content-Type: %s\r\n"
+        "Content-Length:%d\r\n"
+        "\r\n"
+        "%s",
         path,
         hostname,
         content_type,
@@ -173,13 +188,13 @@ void print_response(struct https_response* res)
 
     printf("Response body\n");
     if (res->body_offset > 0)
-        fwrite(res->buffer + res->body_offset, res->size - res->body_offset, 1, stdout);
+        printf(res->buffer + res->body_offset);
 }
 
 int main()
 {
-    const char* get_hostname = "jsonplaceholder.typicode.com";
-    const char* get_pathname = "/posts/1";
+    const char* get_hostname = "httpbin.org";
+    const char* get_pathname = "/get";
 
     printf("GET - %s%s\n", get_hostname, get_pathname);
     struct https_response res = https_get(get_hostname, get_pathname);
@@ -192,8 +207,8 @@ int main()
     print_response(&res);
     https_free(&res);
 
-    const char* post_hostname = "jsonplaceholder.typicode.com";
-    const char* post_pathname = "/posts";
+    const char* post_hostname = "httpbin.org";
+    const char* post_pathname = "/post";
     const char* content_type  = "application/json";
     const char* data          = "{\"message\": \"hello\"}";
 

@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.15)
 project(https_curl VERSION 0.0.1 LANGUAGES C)
 set(CMAKE_C_STANDARD 11)
 
-add_library(libcurl_scu STATIC libcurl_scu.c)
 add_executable(https_curl main.c)
 
 set(HTTPS_CURL_INCL_DIRS
@@ -20,6 +19,13 @@ else()
     message(FATAL_ERROR "OS not supported yet")
 endif()
 
-target_include_directories(libcurl_scu PUBLIC ${HTTPS_CURL_INCL_DIRS})
 target_include_directories(https_curl PUBLIC ${HTTPS_CURL_INCL_DIRS})
+
+# Use this to build with curl as SCU
+add_library(libcurl_scu STATIC libcurl_scu.c)
+target_include_directories(libcurl_scu PUBLIC ${HTTPS_CURL_INCL_DIRS})
 target_link_libraries(https_curl PRIVATE libcurl_scu)
+
+# Use this to build with cmake (more stable, painful build process)
+# include(../../cmake/IncludeCurl.txt)
+# target_link_libraries(https_curl PRIVATE libcurl)

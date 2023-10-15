@@ -1,0 +1,87 @@
+cmake_minimum_required(VERSION 3.15)
+
+# essential CURL settings
+set(CURL_DISABLE_TESTS ON)
+set(CURL_USE_OPENSSL OFF)
+set(BUILD_CURL_EXE OFF)
+set(BUILD_SHARED_LIBS OFF)
+
+# choose SSL backend
+# https://curl.se/docs/ssl-compared.html
+if (APPLE)
+    set(CURL_USE_SECTRANSP ON)
+elseif(WIN32)    
+    set(CURL_USE_SCHANNEL ON)
+endif()
+
+# disable extras
+
+# alt-svc looks like a new feature for http/2 & 3
+# https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Alt-Svc?retiredLocale=uk
+set(CURL_DISABLE_ALTSVC ON)
+set(CURL_DISABLE_COOKIES ON)
+# Used for HTTP auth (not https) and SASL
+# https://curl.se/mail/lib-2018-03/0000.html
+# https://en.wikipedia.org/wiki/Digest_access_authentication
+# https://en.wikipedia.org/wiki/Simple_Authentication_and_Security_Layer
+# Don't need
+set(CURL_DISABLE_CRYPTO_AUTH ON)
+
+# doubt we'll use this
+# https://en.wikipedia.org/wiki/DICT
+set(CURL_DISABLE_DICT ON)
+
+# looks important for security
+# https://en.wikipedia.org/wiki/DNS_over_HTTPS
+set(CURL_DISABLE_DOH OFF)
+set(CURL_DISABLE_FILE ON)
+set(CURL_DISABLE_FTP ON)
+set(CURL_DISABLE_GETOPTIONS ON)
+set(CURL_DISABLE_GOPHER ON)
+# important
+set(CURL_DISABLE_HSTS OFF)
+set(CURL_DISABLE_HTTP OFF)
+# Authorization header in HTTPS request
+# Probably won't ever use it
+set(CURL_DISABLE_HTTP_AUTH ON)
+# email stuff, dont need it
+set(CURL_DISABLE_IMAP ON)
+# dont need it
+# https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol
+set(CURL_DISABLE_LDAP ON)
+set(CURL_DISABLE_LDAPS ON)
+set(CURL_DISABLE_LIBCURL_OPTION ON)
+# more email stuff
+set(CURL_DISABLE_MIME ON)
+# dont need it
+# https://en.wikipedia.org/wiki/MQTT
+set(CURL_DISABLE_MQTT ON)
+# dont need it
+# https://everything.curl.dev/usingcurl/netrc
+set(CURL_DISABLE_NETRC ON)
+set(CURL_DISABLE_NTLM ON)
+set(CURL_DISABLE_OPENSSL_AUTO_LOAD_CONFIG ON)
+set(CURL_DISABLE_PARSEDATE ON)
+set(CURL_DISABLE_POP3 ON)
+set(CURL_DISABLE_PROGRESS_METER ON)
+# We probably want this, but it still works when disabled
+set(CURL_DISABLE_PROXY ON)
+# nah - https://en.wikipedia.org/wiki/Real_Time_Streaming_Protocol
+set(CURL_DISABLE_RTSP ON)
+# maybe want but the example still works without 
+set(CURL_DISABLE_SHUFFLE_DNS ON)
+# nah https://en.wikipedia.org/wiki/Server_Message_Block
+set(CURL_DISABLE_SMB ON)
+# more mail stuff https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol
+set(CURL_DISABLE_SMTP ON)
+set(CURL_DISABLE_SOCKETPAIR ON)
+# nah https://en.wikipedia.org/wiki/Telnet
+set(CURL_DISABLE_TELNET ON)
+# nah https://en.wikipedia.org/wiki/Trivial_File_Transfer_Protocol
+set(CURL_DISABLE_TFTP ON)
+set(CURL_DISABLE_VERBOSE_STRINGS ON)
+
+set(CURL_ENABLE_EXPORT_TARGET OFF)
+set(ENABLE_THREADED_RESOLVER OFF)
+
+add_subdirectory("${CMAKE_SOURCE_DIR}/modules/curl" ${CMAKE_CURRENT_BINARY_DIR}/cmake_libcurl EXCLUDE_FROM_ALL)
