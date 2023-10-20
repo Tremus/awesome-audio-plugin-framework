@@ -41,6 +41,7 @@ Any license labelled Dual or Multi usually defaults to a kind of GPL but with a 
 | File/folder window | [tinyfiledialogs](https://sourceforge.net/projects/tinyfiledialogs/) | zlib      | Native select file/folder dialogue boxes, alerts, colour picker & more                                                                                         |
 | Binary embed       | [bin2c](https://github.com/adobe/bin2c)                              | Apache 2  | CLI. Turns single file (eg. font, image) into `.c` containg `const char[]`.                                                                                    |
 | Binary embed       | [c-embed](https://github.com/weigert/c-embed)                        | MIT       | CLI. Turns multiple files (eg. font, image) into single `.o`. Access in code using virtual file system                                                         |
+| Base64             | [base64](https://github.com/aklomp/base64)                           | BSD-2     | Base64 string encode & decode. See [this](https://github.com/Tremus/base64/blob/master/include/libbase64_scu.c) for a simpler & faster build                   |
 
 ## C++
 

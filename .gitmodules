@@ -10,3 +10,6 @@
 [submodule "modules/cute_headers"]
 	path = modules/cute_headers
 	url = https://github.com/RandyGaul/cute_headers
+[submodule "modules/base64"]
+	path = modules/base64
+	url = https://github.com/Tremus/base64
