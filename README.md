@@ -4,11 +4,17 @@ Curated list of small C/C++ libraries for building your own custom audio plugin 
 
 Small libraries usually follow the [Unix philosophy](https://en.wikipedia.org/wiki/Unix_philosophy#Do_One_Thing_and_Do_It_Well), making them more maintainable, replaceable, and flexible in how they are used. Frameworks, by definition, break this philosophy.
 
-This lists aims to support Windows, MacOS, and usually Linux. iOS, Android and Emscripten are not actively supported.
+See the [Examples](./examples) folder for code & build exmaples of these libraries.
 
-## Licensing
+In future we hope to provide [plugin templates](./templates) based on small libraries.
 
-Any license labelled Dual or Multi usually defaults to a kind of GPL but with a conditional alternative. Sometimes it requires a fee, sometimes it's due to a dependancy, which may be replaceable. Visit their repos and websites to learn about exact conditions.
+## Values
+
+The listed libraries and example code are generally biased towards:
+
+-   Permissive non-GPL licensing
+-   Support for Windows & MacOS. (Linux, iOS, Android and Emscripten are not actively supported!)
+-   Ease of compilation, fast builds, small binaries, fewer LOCs, single compilation units, C89 & C99
 
 ## C
 
@@ -18,7 +24,9 @@ Any license labelled Dual or Multi usually defaults to a kind of GPL but with a 
 | Window             | [sokol](https://github.com/floooh/sokol)                             | zlib      | Native window with mouse & keyboard callbacks. Made with games in mind. See: `sokol_app.h`.                                                                    |
 | VST3               | [vst3_c_api](https://github.com/steinbergmedia/vst3_c_api)           | Dual      | VST3 wrapper                                                                                                                                                   |
 | CLAP               | [clap](https://github.com/free-audio/clap)                           | MIT       | CLAP wrapper                                                                                                                                                   |
-| Threads            | [tinycthread](https://github.com/tinycthread/tinycthread)            | BSD like  | C11 threads.h like API, cross platform wrapper                                                                                                                 |
+| Threads            | [threads.h](https://github.com/mattiasgustavsson/libs)               | Unlicense | C11 like threads & atomics, mutexes, singals, single reader/writer queues, cross platform                                                                      |
+| Threads            | [tinycthread](https://github.com/tinycthread/tinycthread)            | BSD like  | C11 threads.h like API, cross platform                                                                                                                         |
+| Atomics            | [c89atomic](https://github.com/mackron/c89atomic)                    | Unlicense | C11 like atomic.h like API, supports flags, float, double and ptr, cross platform                                                                              |
 | File stream        | [sokol](https://github.com/floooh/sokol)                             | zlib      | Read & write stream for local files. See `sokol_fetch.h`                                                                                                       |
 | Log                | [sokol](https://github.com/floooh/sokol)                             | zlib      | Log to console or file. See `sokol_log.h`                                                                                                                      |
 | Log                | [stb](https://github.com/nothings/stb)                               | MIT       | Fast log to console. See `stb_sprintf.h`                                                                                                                       |
@@ -72,5 +80,4 @@ Things to add to the list:
 
 -   File searching
 -   Graphics engine agnostic customisable widgets
--   Identify hardware, available CPU instructions at runtime
 -   Something else? (suggest more!)
