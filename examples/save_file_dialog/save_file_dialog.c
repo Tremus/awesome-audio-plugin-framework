@@ -1,18 +1,12 @@
-// Must include stdint.h before tinyfiledialogs.h
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
-
-#include <tinyfiledialogs.h>
+#include <tinyfiledialogs.c>
 
 int main()
 {
     char const* lTheSaveFileName;
     char const* lFilterPatterns[1] = {"*.txt"};
-    FILE* lIn;
+    FILE*       lIn;
 
-    lTheSaveFileName =
-        tinyfd_saveFileDialog("Save File", NULL, 1, lFilterPatterns, NULL);
+    lTheSaveFileName = tinyfd_saveFileDialog("Save File", NULL, 1, lFilterPatterns, NULL);
 
     if (! lTheSaveFileName)
     {
@@ -22,10 +16,8 @@ int main()
 
 #ifdef _WIN32
     if (tinyfd_winUtf8)
-        lIn = _wfopen(
-            tinyfd_utf8to16(lTheSaveFileName),
-            L"w"); /* the UTF-8 filename is converted to UTF-16 to open the
-                      file*/
+        lIn = _wfopen(tinyfd_utf8to16(lTheSaveFileName), L"w"); /* the UTF-8 filename is converted to UTF-16 to open the
+                                                                   file*/
     else
 #endif
         lIn = fopen(lTheSaveFileName, "w");

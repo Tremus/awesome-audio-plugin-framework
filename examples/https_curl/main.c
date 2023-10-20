@@ -7,20 +7,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-static struct curl_slist POST_HEADERS[] = {
-    {.data = "Content-Type: application/json", .next = NULL}};
+static struct curl_slist POST_HEADERS[] = {{.data = "Content-Type: application/json", .next = NULL}};
 
 struct https_response
 {
-    CURL* session;
-    char* body;
-    size_t size;
-    long status;
+    CURL*       session;
+    char*       body;
+    size_t      size;
+    long        status;
     atomic_bool cancel_request;
 };
 
-int https_progress_callback(void* clientp, curl_off_t dltotal, curl_off_t dlnow,
-                            curl_off_t ultotal, curl_off_t ulnow)
+int https_progress_callback(void* clientp, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow)
 {
     struct https_response* res = (struct https_response*)clientp;
     if (atomic_load(&res->cancel_request))
@@ -32,10 +30,10 @@ int https_progress_callback(void* clientp, curl_off_t dltotal, curl_off_t dlnow,
         return CURL_PROGRESSFUNC_CONTINUE;
 }
 
-static size_t https_request_cb(void* data, size_t size, size_t nmemb,
-                               void* clientp)
+static size_t https_request_cb(void* data, size_t size, size_t nmemb, void* clientp)
 {
-    size_t realsize            = size * nmemb;
+    size_t realsize = size * nmemb;
+
     struct https_response* res = (struct https_response*)clientp;
 
     char* ptr = realloc(res->body, res->size + realsize + 1);
@@ -44,7 +42,7 @@ static size_t https_request_cb(void* data, size_t size, size_t nmemb,
 
     res->body = ptr;
     memcpy(&(res->body[res->size]), data, realsize);
-    res->size += realsize;
+    res->size            += realsize;
     res->body[res->size] = 0;
 
     return realsize;
@@ -58,8 +56,7 @@ static CURLcode https_get(struct https_response* res, const char* url)
     curl_easy_setopt(session, CURLOPT_WRITEFUNCTION, https_request_cb);
     curl_easy_setopt(session, CURLOPT_NOPROGRESS, 0);
     curl_easy_setopt(session, CURLOPT_XFERINFODATA, (void*)res);
-    curl_easy_setopt(session, CURLOPT_XFERINFOFUNCTION,
-                     https_progress_callback);
+    curl_easy_setopt(session, CURLOPT_XFERINFOFUNCTION, https_progress_callback);
 
     /* we pass our 'https_response' struct to the callback function */
     curl_easy_setopt(session, CURLOPT_WRITEDATA, (void*)res);
@@ -74,16 +71,14 @@ static CURLcode https_get(struct https_response* res, const char* url)
 }
 
 // Use this for simple JSON POST requests
-static CURLcode https_post_json(struct https_response* res, const char* url,
-                                const char* postdata)
+static CURLcode https_post_json(struct https_response* res, const char* url, const char* postdata)
 {
     CURL* session = res->session;
     /* send all data to this function  */
     curl_easy_setopt(session, CURLOPT_WRITEFUNCTION, https_request_cb);
     curl_easy_setopt(session, CURLOPT_NOPROGRESS, 0);
     curl_easy_setopt(session, CURLOPT_XFERINFODATA, (void*)res);
-    curl_easy_setopt(session, CURLOPT_XFERINFOFUNCTION,
-                     https_progress_callback);
+    curl_easy_setopt(session, CURLOPT_XFERINFOFUNCTION, https_progress_callback);
 
     /* we pass our 'https_response' struct to the callback function */
     curl_easy_setopt(session, CURLOPT_WRITEDATA, (void*)res);
@@ -104,7 +99,7 @@ static CURLcode https_post_json(struct https_response* res, const char* url,
 // https://curl.se/libcurl/c/CURLOPT_WRITEFUNCTION.html
 int main()
 {
-    CURLcode code;
+    CURLcode               code;
     struct https_response* res = malloc(sizeof(struct https_response));
 
     res->session = curl_easy_init();
@@ -128,8 +123,7 @@ int main()
         }
         else
         {
-            fprintf(stderr, "curl_easy_perform() failed: %s\n",
-                    curl_easy_strerror(code));
+            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(code));
         }
 
         /* remember to free the buffer */
@@ -147,8 +141,7 @@ int main()
     if (res->session)
     {
 
-        code = https_post_json(res, "https://httpbin.org/post",
-                               "{\"greeting\": \"Bonjour\"}");
+        code = https_post_json(res, "https://httpbin.org/post", "{\"greeting\": \"Bonjour\"}");
 
         if (code == CURLE_OK)
         {
@@ -158,8 +151,7 @@ int main()
         }
         else
         {
-            fprintf(stderr, "curl_easy_perform() failed: %s\n",
-                    curl_easy_strerror(code));
+            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(code));
         }
 
         /* remember to free the buffer */

@@ -52,7 +52,6 @@
 #define HAVE_INET_NTOP 1
 #define HAVE_INET_PTON 1
 #define HAVE_INTTYPES_H 1
-#define HAVE_LIBZ 1
 #define HAVE_LOCALE_H 1
 #define HAVE_LONGLONG 1
 #define HAVE_RECV 1
@@ -179,6 +178,7 @@
 #define HAVE_UNISTD_H 1
 #define HAVE_UTIMES 1
 #define HAVE_UTIME_H 1
+#define HAVE_LIBZ 1
 #define OS "Darwin"
 #define RANDOM_FILE "/dev/urandom"
 #define SIZEOF_LONG 8

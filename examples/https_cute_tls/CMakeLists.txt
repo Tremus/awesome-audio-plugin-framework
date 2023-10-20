@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 project(https_cute_tls VERSION 0.0.1 LANGUAGES C)
-set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD 99)
 
 if (WIN32)
     add_executable(https_cute_tls main.c)
@@ -14,4 +14,4 @@ else()
     message(FATAL_ERROR "OS not supported")
 endif()
 
-target_include_directories(https_cute_tls PUBLIC ../../modules/cute_headers)
+target_include_directories(https_cute_tls PRIVATE ../../modules/cute_headers)

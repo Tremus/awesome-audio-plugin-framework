@@ -50,17 +50,19 @@ void https_read_response(struct https_response* res, TLS_Connection* conn)
         res->size += num_bytes_read;
     }
     tls_disconnect(*conn);
-    // NULL terminate our response body. Makes it more compatible with C functions
+    // NULL terminate our response body. Makes it more compatible with C
+    // functions
     res->buffer[res->size++] = '\0';
-    res->capacity += TLS_1_KB;
+    res->capacity            += TLS_1_KB;
 
     int         version;
     const char* msg;
     size_t      msg_len;
 
-    // If we don't allocate enough headers, phr_parse_response won't return the offset to our response body
-    // We already have at least 1kb padded memory allocated in our response buffer
-    // Use remaining memory to store headers (at least 1kb / 32bytes = 32 headers)
+    // If we don't allocate enough headers, phr_parse_response won't return the
+    // offset to our response body We already have at least 1kb padded memory
+    // allocated in our response buffer Use remaining memory to store headers
+    // (at least 1kb / 32bytes = 32 headers)
     res->num_headers = (res->capacity - res->size) / sizeof(struct phr_header);
     res->headers     = (struct phr_header*)(res->buffer + res->size + (res->size % 8));
 
@@ -102,8 +104,8 @@ struct https_response https_get(const char* hostname, const char* pathname)
     int  req_len = sprintf(
         req,
         "GET %s HTTP/1.1\r\n"
-        "Host: %s\r\n"
-        "Connection: close\r\n\r\n",
+         "Host: %s\r\n"
+         "Connection: close\r\n\r\n",
         pathname,
         hostname);
     if (tls_send(connection, req, req_len) < 0)
@@ -142,13 +144,13 @@ struct https_response https_post(const char* hostname, const char* path, const c
     int  req_len = sprintf(
         req,
         "POST %s HTTP/1.1\r\n"
-        "Host: %s\r\n"
-        "Connection: close\r\n"
-        "Accept: */*\r\n"
-        "Content-Type: %s\r\n"
-        "Content-Length:%d\r\n"
-        "\r\n"
-        "%s",
+         "Host: %s\r\n"
+         "Connection: close\r\n"
+         "Accept: */*\r\n"
+         "Content-Type: %s\r\n"
+         "Content-Length:%d\r\n"
+         "\r\n"
+         "%s",
         path,
         hostname,
         content_type,
@@ -188,7 +190,10 @@ void print_response(struct https_response* res)
 
     printf("Response body\n");
     if (res->body_offset > 0)
-        printf(res->buffer + res->body_offset);
+    {
+        fwrite(res->buffer + res->body_offset, res->size - res->body_offset, 1, stdout);
+        printf("\n");
+    }
 }
 
 int main()
@@ -212,7 +217,7 @@ int main()
     const char* content_type  = "application/json";
     const char* data          = "{\"message\": \"hello\"}";
 
-    printf("\nPOST - %s%s\n", post_hostname, post_pathname);
+    printf("POST - %s%s\n", post_hostname, post_pathname);
     res = https_post(post_hostname, post_pathname, content_type, data);
 
     if (res.status_code == 0)

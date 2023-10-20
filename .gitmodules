@@ -1,9 +1,6 @@
 [submodule "modules/tinyfiledialogs"]
 	path = modules/tinyfiledialogs
 	url = https://git.code.sf.net/p/tinyfiledialogs/code
-[submodule "modules/tinycthread"]
-	path = modules/tinycthread
-	url = https://github.com/Tremus/tinycthread
 [submodule "modules/curl"]
 	path = modules/curl
 	url = https://github.com/curl/curl
