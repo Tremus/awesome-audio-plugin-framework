@@ -10,3 +10,6 @@
 [submodule "modules/base64"]
 	path = modules/base64
 	url = https://github.com/Tremus/base64
+[submodule "modules/pffft"]
+	path = modules/pffft
+	url = https://github.com/Tremus/pffft
