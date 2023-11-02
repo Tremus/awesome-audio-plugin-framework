@@ -1,2 +1,3 @@
 .cache
 build
+examples/image_stack_blur/brain_blur.jpg

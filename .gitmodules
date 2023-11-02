@@ -13,3 +13,6 @@
 [submodule "modules/pffft"]
 	path = modules/pffft
 	url = https://github.com/Tremus/pffft
+[submodule "modules/stb"]
+	path = modules/stb
+	url = https://github.com/nothings/stb
