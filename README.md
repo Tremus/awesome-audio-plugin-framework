@@ -4,7 +4,7 @@ Curated list of small C/C++ libraries for building your own custom audio plugin 
 
 Small libraries usually follow the [Unix philosophy](https://en.wikipedia.org/wiki/Unix_philosophy#Do_One_Thing_and_Do_It_Well), making them more maintainable, replaceable, and flexible in how they are used. Frameworks, by definition, break this philosophy.
 
-See the [Examples](./examples) folder for code & build exmaples of these libraries.
+See the [Examples](./examples) folder for code & build examples of these libraries.
 
 In future we hope to provide [plugin templates](./templates) based on small libraries.
 

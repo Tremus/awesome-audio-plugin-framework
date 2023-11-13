@@ -28,7 +28,8 @@ int main()
     snprintf(filepath, sizeof(filepath), "%s/brain.jpg", CMAKE_CURRENT_SOURCE_DIR);
     fix_filepath_windows(filepath);
 
-    int       width, height, channels_in_file;
+    int width, height, channels_in_file;
+    // The jpg image will only have 3 colour channels (RGB), but we require RGBA for the stack blur algorithm
     const int desired_channels = 4;
 
     printf("Opening: %s\n", filepath);
@@ -46,8 +47,8 @@ int main()
     const int blur_radius_px = 20; // 2-254
     printf("Blurring image by %dpx\n", blur_radius_px);
 
-    unsigned char stack[(blur_radius_px * 2 + 1) * 4];
-    stackblurJob(data, width, height, blur_radius_px, 1, 0, step, stack);
+    unsigned char stack_memory[(blur_radius_px * 2 + 1) * 4];
+    stackblurJob(data, width, height, blur_radius_px, 1, 0, step, stack_memory);
 
     // Save image
     snprintf(filepath, sizeof(filepath), "%s/brain_blur.jpg", CMAKE_CURRENT_SOURCE_DIR);
