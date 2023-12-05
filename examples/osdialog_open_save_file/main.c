@@ -1,7 +1,11 @@
+#include <osdialog.h>
+
 #ifdef _WIN32
 #define _CRT_SECURE_NO_WARNINGS 1
-#define snwprintf _snwprintf
+#define snwprintf               _snwprintf
 #include <osdialog_win.c>
+#elif defined(__APPLE__)
+#include <osdialog_mac.m>
 #endif
 
 #include <osdialog.c>
