@@ -16,3 +16,6 @@
 [submodule "modules/stb"]
 	path = modules/stb
 	url = https://github.com/nothings/stb
+[submodule "modules/osdialog"]
+	path = modules/osdialog
+	url = https://github.com/AndrewBelt/osdialog
