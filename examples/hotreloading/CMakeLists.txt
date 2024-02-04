@@ -23,7 +23,7 @@ if (WIN32)
         )
 
 else()
-    add_executable(${PROJECT_NAME} main.c)
+    add_executable(${PROJECT_NAME} main_macos.c)
     target_link_libraries(${PROJECT_NAME} PRIVATE "-framework CoreServices")
     
     target_compile_definitions(${PROJECT_NAME} PRIVATE
