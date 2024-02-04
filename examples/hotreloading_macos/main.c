@@ -65,7 +65,7 @@ int main()
     assert(started);
 
     // Set up callback for user hitting Ctrl-C
-    (void)signal(SIGINT, ctrlc_cb);
+    signal(SIGINT, ctrlc_cb);
     while (flag_exit_event_loop == 0)
     {
         int change = __atomic_exchange_n(&flag_file_changed_in_watchdir, 0, __ATOMIC_SEQ_CST);

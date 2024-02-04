@@ -4,5 +4,5 @@
 void hello()
 {
     // Change the string in this function to test hot reloading
-    printf("hello\n");
+    fprintf(stderr, "hello\n");
 }
