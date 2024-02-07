@@ -37,7 +37,7 @@ int main()
 
     HANDLE hWatchThread = CreateThread(NULL, 0, &WatchFileChangesProc, NULL, 0, 0);
 
-    HMODULE lib = LoadLibrary(HOTRELOAD_LIB_PATH);
+    HMODULE lib = LoadLibraryA(HOTRELOAD_LIB_PATH);
     assert(lib != NULL);
     hello_t libfunc = (hello_t)GetProcAddress(lib, "hello");
     assert(libfunc != NULL);
@@ -45,7 +45,7 @@ int main()
     signal(SIGINT, ctrlc_cb);
     while (flag_exit_main_func == 0)
     {
-        LONG rebuild = InterlockedExchange(&flag_should_rebuild, 0);
+        LONG rebuild = _InterlockedExchange(&flag_should_rebuild, 0);
 
         if (rebuild)
         {
@@ -67,7 +67,7 @@ int main()
             ZeroMemory(&pi, sizeof(pi));
 
             // Start the child process.
-            if (! CreateProcess(0, HOTRELOAD_BUILD_COMMAND, 0, 0, FALSE, CREATE_NEW_CONSOLE, 0, 0, &si, &pi))
+            if (! CreateProcessA(0, HOTRELOAD_BUILD_COMMAND, 0, 0, FALSE, CREATE_NEW_CONSOLE, 0, 0, &si, &pi))
             {
                 printf("CreateProcess failed (%lu).\n", GetLastError());
                 return 1;
@@ -82,7 +82,7 @@ int main()
 
             UINT64 build_end_ns = get_now_ns();
 
-            lib = LoadLibrary(HOTRELOAD_LIB_PATH);
+            lib = LoadLibraryA(HOTRELOAD_LIB_PATH);
             assert(lib != NULL);
             libfunc = (hello_t)GetProcAddress(lib, "hello");
             assert(libfunc != NULL);
@@ -105,6 +105,7 @@ int main()
         WaitForSingleObject(hWatchThread, INFINITE);
         CloseHandle(hWatchThread);
     }
+    FreeLibrary(lib);
     return 0;
 }
 
@@ -113,7 +114,7 @@ DWORD WatchFileChangesProc(void* ptr)
     // Most this code was taken from here: https://gist.github.com/nickav/a57009d4fcc3b527ed0f5c9cf30618f8
     fprintf(stderr, "Watching folder %s\n", HOTRELOAD_WATCH_DIR);
 
-    HANDLE hDirectory = CreateFile(
+    HANDLE hDirectory = CreateFileA(
         HOTRELOAD_WATCH_DIR,
         FILE_LIST_DIRECTORY,
         FILE_SHARE_READ,
