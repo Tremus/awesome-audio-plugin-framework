@@ -102,7 +102,6 @@ int main()
     printf("Shutting down\n");
     unload_libs();
     FSEventStreamStop(stream);
-    FSEventStreamSetDispatchQueue(stream, NULL);
     FSEventStreamInvalidate(stream);
     FSEventStreamRelease(stream);
     dispatch_release(queue);
@@ -141,7 +140,7 @@ void unload_libs()
 #pragma endregion LIB_LOADING
 
 #pragma region FILEWATCHING
-// Saving a file ususually also contains the flag kFSEventStreamEventFlagItemInodeMetaMod
+// Saving a file usually also contains the flag kFSEventStreamEventFlagItemInodeMetaMod
 static const FSEventStreamEventFlags kFSEventStreamEventFlagFileModified =
     kFSEventStreamEventFlagItemModified | kFSEventStreamEventFlagItemIsFile;
 
