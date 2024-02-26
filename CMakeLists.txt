@@ -13,3 +13,5 @@ add_subdirectory(examples/osdialog_open_save_file)
 add_subdirectory(examples/tinyfiledialogs_open_file)
 add_subdirectory(examples/tinyfiledialogs_save_file)
 add_subdirectory(examples/tweetnacl)
+
+add_subdirectory(templates/cplug_pugl_nanovg)

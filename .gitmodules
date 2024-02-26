@@ -19,3 +19,12 @@
 [submodule "modules/osdialog"]
 	path = modules/osdialog
 	url = https://github.com/AndrewBelt/osdialog
+[submodule "modules/CPLUG"]
+	path = modules/CPLUG
+	url = https://github.com/Tremus/CPLUG
+[submodule "modules/pugl"]
+	path = modules/pugl
+	url = https://github.com/lv2/pugl
+[submodule "modules/nanovg_compat"]
+	path = modules/nanovg_compat
+	url = https://github.com/Tremus/nanovg_compat
