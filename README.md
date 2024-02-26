@@ -6,9 +6,7 @@ Small libraries usually follow the [Unix philosophy](https://en.wikipedia.org/wi
 
 See the [Examples](./examples) folder for code & build examples of these libraries.
 
-In future we hope to provide [plugin templates](./templates) based on small libraries.
-
-## Values
+In future we hope to provide [plugin templates](./templates) that are built using several small libraries.
 
 The listed libraries and example code are generally biased towards:
 
@@ -18,40 +16,41 @@ The listed libraries and example code are generally biased towards:
 
 ## C
 
-| Function           | Name                                                                 | License   | Description                                                                                                                                              |
-| ------------------ | -------------------------------------------------------------------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Window             | [Pugl](https://github.com/lv2/pugl)                                  | ISC       | Native window with mouse & keyboard callbacks. Made with plugins in mind                                                                                 |
-| Window             | [sokol](https://github.com/floooh/sokol)                             | zlib      | Native window with mouse & keyboard callbacks. Made with games in mind. See: `sokol_app.h`.                                                              |
-| VST3               | [vst3_c_api](https://github.com/steinbergmedia/vst3_c_api)           | Dual      | VST3 wrapper                                                                                                                                             |
-| CLAP               | [clap](https://github.com/free-audio/clap)                           | MIT       | CLAP wrapper                                                                                                                                             |
-| Threads            | [threads.h](https://github.com/mattiasgustavsson/libs)               | Unlicense | C11 like threads & atomics, mutexes, singals, single reader/writer queues, cross platform                                                                |
-| Threads            | [tinycthread](https://github.com/tinycthread/tinycthread)            | BSD like  | C11 threads.h like API, cross platform                                                                                                                   |
-| Atomics            | [c89atomic](https://github.com/mackron/c89atomic)                    | Unlicense | C11 like atomic.h like API, supports flags, float, double and ptr, cross platform                                                                        |
-| File stream        | [sokol](https://github.com/floooh/sokol)                             | zlib      | Read & write stream for local files. See `sokol_fetch.h`                                                                                                 |
-| Log                | [sokol](https://github.com/floooh/sokol)                             | zlib      | Log to console or file. See `sokol_log.h`                                                                                                                |
-| Log                | [stb](https://github.com/nothings/stb)                               | MIT       | Fast log to console. See `stb_sprintf.h`                                                                                                                 |
-| FFT                | [pffft](https://bitbucket.org/jpommier/pffft/src/master/)            | BSD like  | 1D real & complex FFTs. Competitively fast. SSE & NEON optimised                                                                                         |
-| Audio thread       | [sokol](https://github.com/floooh/sokol)                             | zlib      | Spins up an audio thread with buffer to write to. See `sokol_audio.h`                                                                                    |
-| Audio IO           | [libsoundio](https://github.com/andrewrk/libsoundio)                 | MIT       | Wrapper for CoreAudio, WASAPI + more                                                                                                                     |
-| HTTPS              | [curl](https://github.com/curl/curl)                                 | BSD like  | Makes HTTPS requests                                                                                                                                     |
-| TLS                | [cute_headers](https://github.com/RandyGaul/cute_headers)            | Unlicense | HTTPS request. Lacks any parsing of responses. See `cute_tls.h`                                                                                          |
-| HTTP parsing       | [picohttpparser](https://github.com/h2o/picohttpparser)              | MIT       | Parses HTTP1 requests & responses                                                                                                                        |
-| Time               | [sokol](https://github.com/floooh/sokol)                             | zlib      | Get & parse high resolution time. See `sokol_time.h`                                                                                                     |
-| Image codecs       | [stb](https://github.com/nothings/stb)                               | MIT       | Load/decode many image formats. See `stb_image.h`, `stb_image_resize.h`, `stb_image_write.h`                                                             |
-| Data containers    | [stb](https://github.com/nothings/stb)                               | MIT       | Variable type dynamic arrays and hash maps. See `stb_ds.h`                                                                                               |
-| Strings            | [sds](https://github.com/antirez/sds)                                | BSD-2     | Dyanamic size strings with manipulation and formatting methods.                                                                                          |
-| JSON               | [yyJSON](https://github.com/ibireme/yyjson)                          | MIT       | 2nd fastest JSON encode/decode. Parses all data upfront and creates linked lists for use when searching.                                                 |
-| JSON               | [zzzJSON](https://github.com/dacez/zzzjson)                          | BSD like  | Fast JSON encode/decode. Uses on the fly parsing and string searching and string views.                                                                  |
-| Crypto             | [TweetNaCl](https://tweetnacl.cr.yp.to/software.html)                | PD        | HMAC hashing, Public/Secret key encryption and signatures                                                                                                |
-| Vector graphics    | [NanoVG](https://github.com/memononen/nanovg)                        | zlib      | Antialised 2D polygons, lines, text, gradients and images. Supports OpenGL, Metal, & DirectX 11. [Usefull repo](https://github.com/Tremus/nanovg_compat) |
-| Regex              | [TRE](https://github.com/laurikari/tre)                              | BSD like  | Regex pattern matching. Great name                                                                                                                       |
-| Regex              | [PCRE2](https://github.com/PCRE2Project/pcre2)                       | Dual      | Regex pattern matching                                                                                                                                   |
-| Regex              | [tiny-regex-c](https://github.com/kokke/tiny-regex-c)                | Unlicense | Regex pattern matching                                                                                                                                   |
-| File/folder window | [osdialog](https://github.com/AndrewBelt/osdialog)                   | CC0       | Native select file/folder dialogue boxes, alerts, colour picker & more                                                                                   |
-| File/folder window | [tinyfiledialogs](https://sourceforge.net/projects/tinyfiledialogs/) | zlib      | Native select file/folder dialogue boxes, alerts, colour picker & more                                                                                   |
-| Binary embed       | [bin2c](https://github.com/adobe/bin2c)                              | Apache 2  | CLI. Turns single file (eg. font, image) into `.c` containg `const char[]`.                                                                              |
-| Binary embed       | [c-embed](https://github.com/weigert/c-embed)                        | MIT       | CLI. Turns multiple files (eg. font, image) into single `.o`. Access in code using virtual file system                                                   |
-| Base64             | [base64](https://github.com/aklomp/base64)                           | BSD-2     | Base64 string encode & decode. See [this](https://github.com/Tremus/base64/blob/master/include/libbase64_scu.c) for a simpler & faster build             |
+| Function           | Name                                                                 | License   | Description                                                                                     |
+| ------------------ | -------------------------------------------------------------------- | --------- | ----------------------------------------------------------------------------------------------  |
+| Plugin wrapper     | [CPLUG](https://github.com/Tremus/CPLUG)                             | Unlicense | Wrapper for VST3, AUv2 & CLAP. Includes standalone builds with hot reloading                    |
+| Window             | [Pugl](https://github.com/lv2/pugl)                                  | ISC       | Native window with mouse & keyboard callbacks. Made with plugins in mind                        |
+| Window             | [sokol](https://github.com/floooh/sokol)                             | zlib      | Native window with mouse & keyboard callbacks. Made with games in mind. See: `sokol_app.h`.     |
+| VST3               | [vst3_c_api](https://github.com/steinbergmedia/vst3_c_api)           | Dual      | VST3 wrapper                                                                                    |
+| CLAP               | [clap](https://github.com/free-audio/clap)                           | MIT       | CLAP wrapper                                                                                    |
+| Threads            | [threads.h](https://github.com/mattiasgustavsson/libs)               | Unlicense | C11 like threads & atomics, mutexes, singals, single reader/writer queues, cross platform       |
+| Threads            | [tinycthread](https://github.com/tinycthread/tinycthread)            | BSD like  | C11 threads.h like API, cross platform                                                          |
+| Atomics            | [c89atomic](https://github.com/mackron/c89atomic)                    | Unlicense | C11 like atomic.h like API, supports flags, float, double and ptr, cross platform               |
+| File stream        | [sokol](https://github.com/floooh/sokol)                             | zlib      | Read & write stream for local files. See `sokol_fetch.h`                                        |
+| Log                | [sokol](https://github.com/floooh/sokol)                             | zlib      | Log to console or file. See `sokol_log.h`                                                       |
+| Log                | [stb](https://github.com/nothings/stb)                               | MIT       | Fast log to console. See `stb_sprintf.h`                                                        |
+| FFT                | [pffft](https://bitbucket.org/jpommier/pffft/src/master/)            | BSD like  | 1D real & complex FFTs. Competitively fast. SSE & NEON optimised                                |
+| Audio thread       | [sokol](https://github.com/floooh/sokol)                             | zlib      | Spins up an audio thread with buffer to write to. See `sokol_audio.h`                           |
+| Audio IO           | [libsoundio](https://github.com/andrewrk/libsoundio)                 | MIT       | Wrapper for CoreAudio, WASAPI + more                                                            |
+| HTTPS              | [curl](https://github.com/curl/curl)                                 | BSD like  | Makes HTTPS requests                                                                            |
+| TLS                | [cute_headers](https://github.com/RandyGaul/cute_headers)            | Unlicense | HTTPS request. Lacks any parsing of responses. See `cute_tls.h`                                 |
+| HTTP parsing       | [picohttpparser](https://github.com/h2o/picohttpparser)              | MIT       | Parses HTTP1 requests & responses                                                               |
+| Time               | [sokol](https://github.com/floooh/sokol)                             | zlib      | Get & parse high resolution time. See `sokol_time.h`                                            |
+| Image codecs       | [stb](https://github.com/nothings/stb)                               | MIT       | Load/decode many image formats. See `stb_image.h`, `stb_image_resize.h`, `stb_image_write.h`    |
+| Data containers    | [stb](https://github.com/nothings/stb)                               | MIT       | Variable type dynamic arrays and hash maps. See `stb_ds.h`                                      |
+| Strings            | [sds](https://github.com/antirez/sds)                                | BSD-2     | Dyanamic size strings with manipulation and formatting methods.                                 |
+| JSON               | [yyJSON](https://github.com/ibireme/yyjson)                          | MIT       | 2nd fastest JSON encode/decode. Parses all data upfront to create a searchable linked list.     |
+| JSON               | [zzzJSON](https://github.com/dacez/zzzjson)                          | BSD like  | Fast JSON encode/decode. Uses on the fly parsing and string searching and string views.         |
+| Crypto             | [TweetNaCl](https://tweetnacl.cr.yp.to/software.html)                | PD        | HMAC hashing, Public/Secret key encryption and signatures                                       |
+| Vector graphics    | [NanoVG](https://github.com/memononen/nanovg)                        | zlib      | Antialised 2D polygons, lines, text, gradients and images using OpenGL                          |
+| Vector graphics    | [nanovg_compat](https://github.com/memononen/nanovg)                 | zlib      | NanoVG wrapper with Metal & DirectX 11 backends and extra functions for initialising a context. |
+| Regex              | [tiny-regex-c](https://github.com/kokke/tiny-regex-c)                | Unlicense | Regex pattern matching                                                                          |
+| Regex              | [PCRE2](https://github.com/PCRE2Project/pcre2)                       | Dual      | Regex pattern matching                                                                          |
+| Regex              | [TRE](https://github.com/laurikari/tre)                              | BSD like  | Regex pattern matching but with a greater name                                                  |
+| File/folder window | [osdialog](https://github.com/AndrewBelt/osdialog)                   | CC0       | Native select file/folder dialogue boxes, alerts, colour picker & more                          |
+| File/folder window | [tinyfiledialogs](https://sourceforge.net/projects/tinyfiledialogs/) | zlib      | Native select file/folder dialogue boxes, alerts, colour picker & more                          |
+| Binary embed       | [bin2c](https://github.com/adobe/bin2c)                              | Apache 2  | CLI. Turns single file (eg. font, image) into `.c` containg `const char[]`.                     |
+| Base64             | [base64](https://github.com/aklomp/base64)                           | BSD-2     | Base64 string encode & decode                                                                   |
 
 ## C++
 
