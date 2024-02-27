@@ -510,11 +510,18 @@ PuglStatus myPuglEventFunc(PuglView* view, const PuglEvent* event)
     {
         if (gui->nvg != NULL)
         {
-            if (gui->mainFramebuffer == 0)
+            if (gui->mainFramebuffer != 0)
                 nvgDeleteFramebuffer(gui->nvg, gui->mainFramebuffer);
-            nvgSetViewBounds(gui->nvg, (void*)puglGetNativeView(gui->view), 2 * gui->width, 2 * gui->height);
+            nvgSetViewBounds(gui->nvg, (void*)puglGetNativeView(gui->view), gui->pixelRatio * gui->width, gui->pixelRatio * gui->height);
             gui->mainFramebuffer = nvgCreateFramebuffer(gui->nvg, gui->pixelRatio * gui->width, gui->pixelRatio * gui->height, 0);
         }
+        break;
+    }
+    case PUGL_MOTION:
+    {
+        double scaleFactor = puglGetScaleFactor(gui->view);
+        double x = event->motion.x / scaleFactor;
+        double y = event->motion.y / scaleFactor;
         break;
     }
     case PUGL_UPDATE:
@@ -569,8 +576,7 @@ void cplug_setParent(void* userGUI, void* hwnd_or_nsview)
     puglSetParentWindow(gui->view, (PuglNativeView)hwnd_or_nsview);
     puglSetBackend(gui->view, puglStubBackend());
     PuglStatus status = puglRealize(gui->view);
-    if (status)
-        fprintf(stderr, "Error realizing view (%s)\n", puglStrerror(status));
+    my_assert(status == PUGL_SUCCESS);
     puglStartTimer(gui->view, 0, 0.016);
 }
 
@@ -611,7 +617,10 @@ bool cplug_setSize(void* userGUI, uint32_t width, uint32_t height)
     struct MyGUI* gui = userGUI;
     gui->width = width;
     gui->height = height;
-    PuglRect rect = {0, 0, width, height};
+
+    double scaleFactor = puglGetScaleFactor(gui->view);
+    PuglRect rect = {0, 0, width * scaleFactor, height * scaleFactor};
+
     return PUGL_SUCCESS == puglSetFrame(gui->view, rect);
 }
 
