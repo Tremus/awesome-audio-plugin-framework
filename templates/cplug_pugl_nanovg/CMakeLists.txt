@@ -35,8 +35,24 @@ set(HOTRELOAD_LIB_NAME template_cplug_pugl_nanovg_hotreload)
 file(RELATIVE_PATH project_rel_path ${CMAKE_SOURCE_DIR} ${PROJECT_SOURCE_DIR})
 
 if (WIN32 AND CMAKE_BUILD_TYPE MATCHES Debug)
-    add_library(${HOTRELOAD_LIB_NAME} MODULE src/plugin.c)
-    target_include_directories(${HOTRELOAD_LIB_NAME} PRIVATE ../../modules/CPLUG/src/)
+    # plugin
+    add_library(${HOTRELOAD_LIB_NAME} MODULE
+        src/plugin.c
+        ../../modules/pugl/src/win.c
+        ../../modules/pugl/src/win_stub.c
+        ../../modules/pugl/src/internal.c
+        ../../modules/pugl/src/common.c
+        ../../modules/nanovg_compat/src/nanovg_compat.c
+        )
+    target_include_directories(${HOTRELOAD_LIB_NAME} PRIVATE
+        ../../modules/CPLUG/src/
+        ../../modules/pugl/include
+        ../../modules/nanovg_compat/src/
+        ../../modules/nanovg_compat/modules/nanovg_dx11/src/)
+    target_compile_definitions(${HOTRELOAD_LIB_NAME} PRIVATE PUGL_STATIC CPLUG_SHARED)
+    target_link_libraries(${HOTRELOAD_LIB_NAME} PRIVATE d3d11 Dwmapi)
+
+    # wrapper
     add_executable(template_cplug_pugl_nanovg_standalone WIN32 ../../modules/CPLUG/src/cplug_standalone_win.c)
     target_include_directories(template_cplug_pugl_nanovg_standalone PRIVATE ../../modules/CPLUG/src/)
 
@@ -46,8 +62,6 @@ if (WIN32 AND CMAKE_BUILD_TYPE MATCHES Debug)
     string(REPLACE "/" "\\\\" HOTRELOAD_WATCH_DIR "${HOTRELOAD_WATCH_DIR_POSIX}")
     string(REPLACE "/" "\\\\" HOTRELOAD_LIB_PATH "${HOTRELOAD_LIB_PATH_POSIX}")
     
-    target_compile_definitions(${HOTRELOAD_LIB_NAME} PRIVATE -DCPLUG_SHARED)
-
     target_compile_definitions(template_cplug_pugl_nanovg_standalone PRIVATE
         -DHOTRELOAD_WATCH_DIR="${HOTRELOAD_WATCH_DIR}"
         -DHOTRELOAD_LIB_PATH="${HOTRELOAD_LIB_PATH}"
@@ -71,8 +85,8 @@ elseif (APPLE)
         ../../modules/pugl/src/common.c
         ../../modules/nanovg_compat/modules/nanovg_dx11/src/nanovg.c
         )
-    target_include_directories(${HOTRELOAD_LIB_NAME}
-        PRIVATE ../../modules/CPLUG/src/
+    target_include_directories(${HOTRELOAD_LIB_NAME} PRIVATE
+        ../../modules/CPLUG/src/
         ../../modules/pugl/include
         ../../modules/nanovg_compat/src
         ../../modules/nanovg_compat/modules/MetalNanoVG/src

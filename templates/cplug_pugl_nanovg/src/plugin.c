@@ -430,6 +430,53 @@ struct MyGUI
     float       pixelRatio;
 };
 
+void drawFrame(struct MyGUI* gui)
+{
+    NVGcontext* nvg = gui->nvg;
+
+    nvgBindFramebuffer(nvg, gui->mainFramebuffer);
+    nvgBeginFrame(nvg, gui->width, gui->height, gui->pixelRatio);
+
+    nvgClearWithColor(nvg, (NVGcolor){0.8f, 0.2f, 0.8f, 1.0f});
+
+    nvgBeginPath(nvg);
+    nvgFillColor(nvg, (NVGcolor){1.0f, 0.0f, 0.0f, 1.0f});
+    nvgRect(nvg, 10, 10, 40, 40);
+    nvgFill(nvg);
+
+    nvgEndFrame(nvg);
+}
+
+void presentFrame(struct MyGUI* gui)
+{
+    NVGcontext* nvg = gui->nvg;
+
+    nvgBindFramebuffer(nvg, 0);
+    nvgBeginFrame(nvg, gui->width, gui->height, gui->pixelRatio);
+
+    NVGpaint img;
+    memset(&img, 0, sizeof(img));
+
+    float transform_scale = 1.0f / gui->pixelRatio;
+
+    nvgTransformScale(img.xform, transform_scale, transform_scale);
+    img.extent[0]  = gui->pixelRatio * gui->width;
+    img.extent[1]  = gui->pixelRatio * gui->height;
+    img.innerColor = (NVGcolor){1.0f, 1.0f, 1.0f, 1.0f};
+    img.image      = gui->mainFramebuffer;
+
+    nvgBeginPath(nvg);
+    nvgRect(nvg, 0.0f, 0.0f, gui->width, gui->height);
+    nvgFillPaint(nvg, img);
+    nvgFill(nvg);
+    nvgResetTransform(nvg);
+
+    nvgEndFrame(nvg);
+#ifdef _WIN32
+    d3dnvgPresent(nvg);
+#endif
+}
+
 PuglStatus myPuglEventFunc(PuglView* view, const PuglEvent* event)
 {
     struct MyGUI* gui = (struct MyGUI*)puglGetHandle(view);
@@ -472,48 +519,12 @@ PuglStatus myPuglEventFunc(PuglView* view, const PuglEvent* event)
     }
     case PUGL_UPDATE:
         break;
-    case PUGL_TIMER:
-    {
-        NVGcontext* nvg = gui->nvg;
-
-        nvgBindFramebuffer(nvg, gui->mainFramebuffer);
-        nvgBeginFrame(nvg, gui->width, gui->height, gui->pixelRatio);
-
-        nvgClearWithColor(nvg, (NVGcolor){0.8f, 0.2f, 0.8f, 1.0f});
-
-        nvgBeginPath(nvg);
-        nvgFillColor(nvg, (NVGcolor){1.0f, 0.0f, 0.0f, 1.0f});
-        nvgRect(nvg, 10, 10, 40, 40);
-        nvgFill(nvg);
-
-        nvgEndFrame(nvg);
-        // bind to back buffer
-        nvgBindFramebuffer(nvg, 0);
-        nvgBeginFrame(nvg, gui->width, gui->height, gui->pixelRatio);
-
-        NVGpaint img;
-        memset(&img, 0, sizeof(img));
-
-        float transform_scale = 1.0f / gui->pixelRatio;
-
-        nvgTransformScale(img.xform, transform_scale, transform_scale);
-        img.extent[0]  = gui->pixelRatio * gui->width;
-        img.extent[1]  = gui->pixelRatio * gui->height;
-        img.innerColor = (NVGcolor){1.0f, 1.0f, 1.0f, 1.0f};
-        img.image      = gui->mainFramebuffer;
-
-        nvgBeginPath(nvg);
-        nvgRect(nvg, 0.0f, 0.0f, gui->width, gui->height);
-        nvgFillPaint(nvg, img);
-        nvgFill(nvg);
-        nvgResetTransform(nvg);
-
-        nvgEndFrame(nvg);
-#ifdef _WIN32
-        d3dnvgPresent(nvg);
-#endif
+    case PUGL_EXPOSE:
         break;
-    }
+    case PUGL_TIMER:
+        drawFrame(gui);
+        presentFrame(gui);
+        break;
     default:
         break;
     }
@@ -598,7 +609,10 @@ void cplug_checkSize(void* userGUI, uint32_t* width, uint32_t* height)
 bool cplug_setSize(void* userGUI, uint32_t width, uint32_t height)
 {
     struct MyGUI* gui = userGUI;
-    return PUGL_SUCCESS == puglSetSize(gui->view, width, height);
+    gui->width = width;
+    gui->height = height;
+    PuglRect rect = {0, 0, width, height};
+    return PUGL_SUCCESS == puglSetFrame(gui->view, rect);
 }
 
 bool cplug_getResizeHints(
