@@ -50,7 +50,7 @@ if (WIN32 AND CMAKE_BUILD_TYPE MATCHES Debug)
         ../../modules/nanovg_compat/src/
         ../../modules/nanovg_compat/modules/nanovg_dx11/src/)
     target_compile_definitions(${HOTRELOAD_LIB_NAME} PRIVATE PUGL_STATIC CPLUG_SHARED)
-    target_link_libraries(${HOTRELOAD_LIB_NAME} PRIVATE d3d11 Dwmapi)
+    target_link_libraries(${HOTRELOAD_LIB_NAME} PRIVATE d3d11 dxguid Dwmapi)
 
     # wrapper
     add_executable(template_cplug_pugl_nanovg_standalone WIN32 ../../modules/CPLUG/src/cplug_standalone_win.c)
