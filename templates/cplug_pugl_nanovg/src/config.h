@@ -23,10 +23,10 @@
 #define CPLUG_VST3_TUID_CONTROLLER 'aapf', 'edit', 'cpgl', '+nvg'
 
 #define CPLUG_AUV2_VIEW_CLASS CPLUGPuglView
-#define CPLUG_AUV2_VIEW_CLASS_STR "CPLUGPuglView"
+#define CPLUG_AUV2_VIEW_CLASS_STR "CPLUGPuglNanoVGView"
 static const unsigned kAudioUnitProperty_UserPlugin = 'plug';
 
-#define CPLUG_CLAP_ID "com.aapf.CPLUGPugl"
+#define CPLUG_CLAP_ID "com.aapf.CPLUGPuglNanoVG"
 #define CPLUG_CLAP_DESCRIPTION "Example plugin"
 #define CPLUG_CLAP_FEATURES CLAP_PLUGIN_FEATURE_INSTRUMENT, CLAP_PLUGIN_FEATURE_STEREO
 

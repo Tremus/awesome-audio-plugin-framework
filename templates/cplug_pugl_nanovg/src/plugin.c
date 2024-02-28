@@ -563,8 +563,6 @@ void* cplug_createGUI(void* userPlugin)
 void cplug_destroyGUI(void* userGUI)
 {
     struct MyGUI* gui = userGUI;
-    puglStopTimer(gui->view, 0);
-    puglUnrealize(gui->view);
     puglFreeView(gui->view);
     puglFreeWorld(gui->world);
     free(gui);
@@ -573,11 +571,20 @@ void cplug_destroyGUI(void* userGUI)
 void cplug_setParent(void* userGUI, void* hwnd_or_nsview)
 {
     struct MyGUI* gui = userGUI;
-    puglSetParentWindow(gui->view, (PuglNativeView)hwnd_or_nsview);
-    puglSetBackend(gui->view, puglStubBackend());
-    PuglStatus status = puglRealize(gui->view);
-    my_assert(status == PUGL_SUCCESS);
-    puglStartTimer(gui->view, 0, 0.016);
+    if (puglGetParentWindow(gui->view))
+    {
+        puglStopTimer(gui->view, 0);
+        puglSetParentWindow(gui->view, (PuglNativeView)NULL);
+        puglUnrealize(gui->view);
+    }
+    if (hwnd_or_nsview)
+    {
+        puglSetParentWindow(gui->view, (PuglNativeView)hwnd_or_nsview);
+        puglSetBackend(gui->view, puglStubBackend());
+        PuglStatus status = puglRealize(gui->view);
+        my_assert(status == PUGL_SUCCESS);
+        puglStartTimer(gui->view, 0, 0.016);
+    }
 }
 
 void cplug_setVisible(void* userGUI, bool visible)

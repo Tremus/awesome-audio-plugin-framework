@@ -19,6 +19,7 @@ else()
         -Wno-nullability-completeness
         -Wno-writable-strings
 
+        -DPUGL_STATIC
         -include${PROJECT_SOURCE_DIR}/src/config.h
     )
     if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
@@ -42,7 +43,7 @@ if (WIN32)
     list(APPEND PLUGIN_SOURCES
         ../../modules/pugl/src/win.c
         ../../modules/pugl/src/win_stub.c
-        ../../modules/nanovg_compat/modules/nanovg_dx11/src/nanovg.c)
+        ../../modules/nanovg_compat/src/nanovg_compat.c)
     list(APPEND PLUGIN_LIBRARIES d3d11 dxguid Dwmapi)
 elseif(APPLE)
     enable_language(OBJC)
@@ -83,7 +84,7 @@ if (WIN32 AND CMAKE_BUILD_TYPE MATCHES Debug)
     # plugin
     add_library(${HOTRELOAD_LIB_NAME} MODULE ${PLUGIN_SOURCES})
     target_include_directories(${HOTRELOAD_LIB_NAME} PRIVATE ${PLUGIN_INCLUDE})
-    target_compile_definitions(${HOTRELOAD_LIB_NAME} PRIVATE PUGL_STATIC CPLUG_SHARED)
+    target_compile_definitions(${HOTRELOAD_LIB_NAME} PRIVATE CPLUG_SHARED)
     target_link_libraries(${HOTRELOAD_LIB_NAME} PRIVATE ${PLUGIN_LIBRARIES})
 
     # wrapper
@@ -92,14 +93,14 @@ if (WIN32 AND CMAKE_BUILD_TYPE MATCHES Debug)
 
     # Windows paths are complicated
     set(HOTRELOAD_WATCH_DIR_POSIX "${PROJECT_SOURCE_DIR}/src")
-    set(HOTRELOAD_LIB_PATH_POSIX "${CMAKE_BINARY_DIR}/${project_rel_path}/${project_rel_path}/${HOTRELOAD_LIB_NAME}.dll")
+    set(HOTRELOAD_LIB_PATH_POSIX "${CMAKE_BINARY_DIR}/${project_rel_path}/${HOTRELOAD_LIB_NAME}.dll")
     string(REPLACE "/" "\\\\" HOTRELOAD_WATCH_DIR "${HOTRELOAD_WATCH_DIR_POSIX}")
     string(REPLACE "/" "\\\\" HOTRELOAD_LIB_PATH "${HOTRELOAD_LIB_PATH_POSIX}")
     
     target_compile_definitions(template_cplug_pugl_nanovg_standalone PRIVATE
         -DHOTRELOAD_WATCH_DIR="${HOTRELOAD_WATCH_DIR}"
         -DHOTRELOAD_LIB_PATH="${HOTRELOAD_LIB_PATH}"
-        -DHOTRELOAD_BUILD_COMMAND="cmake --build ${CMAKE_BINARY_DIR}/${project_rel_path} --config Debug --target ${HOTRELOAD_LIB_NAME}"
+        -DHOTRELOAD_BUILD_COMMAND="cmake --build ${CMAKE_BINARY_DIR} --config Debug --target ${HOTRELOAD_LIB_NAME}"
         -DCPLUG_SHARED
         )
     add_dependencies(template_cplug_pugl_nanovg_standalone ${HOTRELOAD_LIB_NAME})
