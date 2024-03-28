@@ -49,6 +49,7 @@ The listed libraries and example code are generally biased towards:
 | Regex              | [TRE](https://github.com/laurikari/tre)                              | BSD like  | Regex pattern matching but with a greater name                                                  |
 | File/folder window | [osdialog](https://github.com/AndrewBelt/osdialog)                   | CC0       | Native select file/folder dialogue boxes, alerts, colour picker & more                          |
 | File/folder window | [tinyfiledialogs](https://sourceforge.net/projects/tinyfiledialogs/) | zlib      | Native select file/folder dialogue boxes, alerts, colour picker & more                          |
+| File searching     | [cute_headers](https://github.com/RandyGaul/cute_headers_deprecated) | Unlicense | Recursive file & directory search. See `cute_files.h` |
 | Binary embed       | [bin2c](https://github.com/adobe/bin2c)                              | Apache 2  | CLI. Turns single file (eg. font, image) into `.c` containg `const char[]`.                     |
 | Base64             | [base64](https://github.com/aklomp/base64)                           | BSD-2     | Base64 string encode & decode                                                                   |
 

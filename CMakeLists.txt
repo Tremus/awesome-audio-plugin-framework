@@ -5,6 +5,7 @@ project(AAPF)
 
 add_subdirectory(examples/base64_encode_decode)
 add_subdirectory(examples/fft)
+add_subdirectory(examples/file_searching)
 add_subdirectory(examples/hotreloading)
 add_subdirectory(examples/https_curl)
 add_subdirectory(examples/https_cute_tls)
