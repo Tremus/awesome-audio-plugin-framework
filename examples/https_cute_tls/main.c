@@ -1,4 +1,6 @@
 #include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
 #define CUTE_TLS_IMPLEMENTATION
 #include <cute_tls.h>
 
@@ -6,9 +8,9 @@
 
 struct https_response
 {
-    char*  buffer;
-    size_t size;
-    size_t capacity;
+    char*    buffer;
+    uint64_t size;
+    uint64_t capacity;
 
     int status_code;
     int body_offset; // body = buffer + body_offset
@@ -44,7 +46,7 @@ void https_read_response(struct https_response* res, TLS_Connection* conn)
         if (num_bytes_read < 0)
         {
             tls_disconnect(*conn);
-            printf("Failed reading bytes.\n");
+            fprintf(stderr, "Failed reading bytes.\n");
             return;
         }
         res->size += num_bytes_read;
@@ -94,7 +96,7 @@ struct https_response https_get(const char* hostname, const char* pathname)
         }
         else if (state < 0)
         {
-            printf("Error connecting to to %s with code %s.\n", hostname, tls_state_string(state));
+            fprintf(stderr, "Error connecting to to %s with code %s.\n", hostname, tls_state_string(state));
             return res;
         }
     }
@@ -111,7 +113,7 @@ struct https_response https_get(const char* hostname, const char* pathname)
     if (tls_send(connection, req, req_len) < 0)
     {
         tls_disconnect(connection);
-        printf("Failed to send data.\n");
+        fprintf(stderr, "Failed to send data.\n");
         return res;
     }
 
@@ -135,7 +137,7 @@ struct https_response https_post(const char* hostname, const char* path, const c
         }
         else if (state < 0)
         {
-            printf("Error connecting to to %s with code %s.\n", hostname, tls_state_string(state));
+            fprintf(stderr, "Error connecting to to %s with code %s.\n", hostname, tls_state_string(state));
             return res;
         }
     }
@@ -161,7 +163,7 @@ struct https_response https_post(const char* hostname, const char* path, const c
     if (tls_send(connection, req, req_len) < 0)
     {
         tls_disconnect(connection);
-        printf("Failed to send data.\n");
+        fprintf(stderr, "Failed to send data.\n");
         return res;
     }
 
@@ -171,29 +173,20 @@ struct https_response https_post(const char* hostname, const char* path, const c
 
 void print_response(struct https_response* res)
 {
-    // In 2023, C still cannot reliably format a size_t on all systems
-    printf("Bytes received %d\n", (int)res->size);
-    printf("Bytes remaining %d\n", (int)(res->capacity - res->size));
-
-    printf("Status code: %d\n", res->status_code);
-
-    printf("Num headers: %d\n", (int)res->num_headers);
+    fprintf(stderr, "Bytes received %llu\n", res->size);
+    fprintf(stderr, "Bytes remaining %llu\n", (res->capacity - res->size));
+    fprintf(stderr, "Status code: %d\n", res->status_code);
+    fprintf(stderr, "Num headers: %d\n", (int)res->num_headers);
     for (size_t i = 0; i < res->num_headers; i++)
     {
         struct phr_header* h = &res->headers[i];
 
-        fwrite(h->name, h->name_len, 1, stdout);
-        printf(": ");
-        fwrite(h->value, h->value_len, 1, stdout);
-        printf("\n");
+        fprintf(stderr, "%.*s: %.*s\n", (int)(h->name_len), h->name, (int)h->value_len, h->value);
     }
 
-    printf("Response body\n");
+    fprintf(stderr, "Response body\n");
     if (res->body_offset > 0)
-    {
-        fwrite(res->buffer + res->body_offset, res->size - res->body_offset, 1, stdout);
-        printf("\n");
-    }
+        fprintf(stderr, "%.*s\n", (int)(res->size - res->body_offset), res->buffer + res->body_offset);
 }
 
 int main()
@@ -201,12 +194,12 @@ int main()
     const char* get_hostname = "httpbin.org";
     const char* get_pathname = "/get";
 
-    printf("GET - %s%s\n", get_hostname, get_pathname);
+    fprintf(stderr, "GET - %s%s\n", get_hostname, get_pathname);
     struct https_response res = https_get(get_hostname, get_pathname);
 
     if (res.status_code == 0)
     {
-        printf("Failed GET\n");
+        fprintf(stderr, "Failed GET\n");
         return -1;
     }
     print_response(&res);
@@ -217,15 +210,16 @@ int main()
     const char* content_type  = "application/json";
     const char* data          = "{\"message\": \"hello\"}";
 
-    printf("POST - %s%s\n", post_hostname, post_pathname);
+    fprintf(stderr, "POST - %s%s\n", post_hostname, post_pathname);
     res = https_post(post_hostname, post_pathname, content_type, data);
 
     if (res.status_code == 0)
     {
-        printf("Failed POST\n");
+        fprintf(stderr, "Failed POST\n");
         return -1;
     }
     print_response(&res);
+    https_free(&res);
 
     return 0;
 }
