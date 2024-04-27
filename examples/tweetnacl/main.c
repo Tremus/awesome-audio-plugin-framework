@@ -5,6 +5,7 @@
 #include <unistd.h>
 #endif
 #include "tweetnacl.h"
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -75,14 +76,22 @@ void randombytes(unsigned char* x, unsigned long long xlen)
 #endif
 }
 
+void print_b64(const char* msg, unsigned char* data, size_t datalen)
+{
+    char encodebuf[256];
+    assert(sizeof(encodebuf) > Base64encode_len(datalen));
+    Base64encode(encodebuf, data, datalen);
+    printf("%s: %s\n", msg, encodebuf);
+}
+
 int main()
 {
     unsigned char alice_pub[crypto_box_PUBLICKEYBYTES];
     unsigned char alice_sec[crypto_box_SECRETKEYBYTES];
     unsigned char bob_pub[crypto_box_PUBLICKEYBYTES];
     unsigned char bob_sec[crypto_box_SECRETKEYBYTES];
-    const char*   msg   = "Alice's secret message!";
-    size_t        msize = strlen(msg);
+    const char*   alice_msg    = "Alice's secret message!";
+    size_t        alice_msglen = strlen(alice_msg);
 
     // Create keypairs
     crypto_box_keypair(alice_pub, alice_sec);
@@ -92,89 +101,93 @@ int main()
     int public_encode_len = Base64encode_len(crypto_box_PUBLICKEYBYTES);
     int secret_encode_len = Base64encode_len(crypto_box_SECRETKEYBYTES);
 
-    // Display Alice public key
-    char alice_pub_enc[public_encode_len];
-    Base64encode(alice_pub_enc, (const char*)alice_pub, crypto_box_PUBLICKEYBYTES);
-    printf("Alice public key: %s\n", alice_pub_enc);
-
-    // Display Alice secret key
-    char alice_sec_enc[secret_encode_len];
-    Base64encode(alice_sec_enc, (const char*)alice_sec, crypto_box_PUBLICKEYBYTES);
-    printf("Alice secret key: %s\n", alice_sec_enc);
-
-    // Display Bob public key
-    char bob_pub_enc[public_encode_len];
-    Base64encode(bob_pub_enc, (const char*)bob_pub, crypto_box_PUBLICKEYBYTES);
-    printf("Bob public key: %s\n", bob_pub_enc);
-
-    // Display Bob secret key
-    char bob_sec_enc[secret_encode_len];
-    Base64encode(bob_sec_enc, (const char*)bob_sec, crypto_box_PUBLICKEYBYTES);
-    printf("Bob secret key: %s\n", bob_sec_enc);
+    // Display keys
+    print_b64("Alice public key", alice_pub, sizeof(alice_pub));
+    print_b64("Alice secret key", alice_sec, sizeof(alice_sec));
+    print_b64("Bob public key", bob_pub, sizeof(bob_pub));
+    print_b64("Bob secret key", bob_sec, sizeof(bob_sec));
 
     // Display message
-    printf("Message: %s\n", msg);
+    printf("Alice message: %s\n", alice_msg);
 
     // Here we will pretend to be Alice, sending a message to Bob
     // She needs:
     // 1. A NONCE
-    unsigned char anonce[crypto_box_NONCEBYTES];
-    randombytes(anonce, sizeof(anonce));
-    // 2. i/o buffers
-    size_t         abufsize = msize + crypto_box_ZEROBYTES;
-    unsigned char* ain      = malloc(abufsize);
-    unsigned char* aout     = malloc(abufsize);
-    // 3. Fill input buffer with Alice's message, padded with 32 zeros
-    memset(ain, 0, crypto_box_ZEROBYTES);
-    memcpy(ain + crypto_box_ZEROBYTES, msg, msize);
+    unsigned char alice_nonce[crypto_box_NONCEBYTES];
+    randombytes(alice_nonce, sizeof(alice_nonce));
+    // 2. i/o buffers for encryption
+    size_t         alice_io_len = alice_msglen + crypto_box_ZEROBYTES;
+    unsigned char* alice_io_buf = malloc(alice_io_len * 2);
+    unsigned char* alice_in     = alice_io_buf;
+    unsigned char* alice_out    = alice_io_buf + alice_io_len;
+    // 3. Fill input buffer with Alice's message, prefixed with 32 zeros
+    memset(alice_in, 0, crypto_box_ZEROBYTES);
+    memcpy(alice_in + crypto_box_ZEROBYTES, alice_msg, alice_msglen);
 
-    // Encrypt alice encrypts message using Bobs public key
-    int result = crypto_box(aout, ain, abufsize, anonce, bob_pub, alice_sec);
-    // Display as base 64
-    int  enc_len = Base64encode_len(abufsize);
-    char aout_enc[enc_len];
-    Base64encode(aout_enc, (const char*)aout, abufsize);
-    printf("Result: %d\n", result);
-    printf("Encrypted message: %s\n", aout_enc);
+    // Alice encrypts message using Bobs public key
+    // The result of this box function will prefix alice_out with 16 zeros
+    int result = crypto_box(alice_out, alice_in, alice_io_len, alice_nonce, bob_pub, alice_sec);
+    assert(result == 0);
+    printf("Encrypt result: %d\n", result);
 
     // Presumably Alice's message will be saved to a file or sent over a
     // network. The message should consist of a NONCE part and encrypted message
     // part. Because the NONCE is a fixed size, she'll simply prefix her message
     // with the nonce.
-    size_t         esize = abufsize - crypto_box_BOXZEROBYTES + crypto_box_NONCEBYTES;
-    unsigned char* emsg  = malloc(esize);
-    memcpy(emsg, anonce, crypto_box_NONCEBYTES); // prefix
-    memcpy(emsg + crypto_box_NONCEBYTES, aout + crypto_box_BOXZEROBYTES, esize - crypto_box_NONCEBYTES);
-    // This example will not save any files, but you would use emsg & esize
-    // in your fopen/fwrite calls.
+    size_t         alice_encrypt_buflen = alice_io_len - crypto_box_BOXZEROBYTES + crypto_box_NONCEBYTES;
+    unsigned char* alice_encrypt_msg    = malloc(alice_encrypt_buflen);
+    memcpy(alice_encrypt_msg, alice_nonce, crypto_box_NONCEBYTES); // prefix
+    memcpy(
+        alice_encrypt_msg + crypto_box_NONCEBYTES,
+        alice_out + crypto_box_BOXZEROBYTES,
+        alice_encrypt_buflen - crypto_box_NONCEBYTES);
 
-    // Now we will pretend to be Bob, who will decrypt Alice's message.
-    // Bob only has knowledge of emsg, esize, and Alices public key.
+    // This example will not save any files, but we will pretend to
+    size_t alice_encode_len = Base64encode_len(alice_encrypt_buflen);
+    char*  alice_encode_buf = malloc(alice_encode_len);
+    Base64encode(alice_encode_buf, (const char*)alice_encrypt_msg, alice_encrypt_buflen);
+    printf("Alice encrypted & encoded message: %s\n", alice_encode_buf);
+
+    // Now we will pretend to be Bob, who will decode & decrypt Alice's message.
+    // Bob only has knowledge of alice_encode_buf, alice_encode_len, and Alices public key.
     // He needs:
-    // 1. The NONCE, which Alice prefixed in her message
-    unsigned char bnonce[crypto_box_NONCEBYTES];
-    memcpy(bnonce, emsg, crypto_box_NONCEBYTES);
-    // 2. i/o buffers
-    size_t         bbufsize = esize - crypto_box_NONCEBYTES + crypto_box_BOXZEROBYTES;
-    unsigned char* bin      = malloc(bbufsize);
-    unsigned char* bout     = malloc(bbufsize);
-    // The enrypted message, formatted with 16 padded zeros
-    memset(bin, 0, crypto_box_BOXZEROBYTES);
-    memcpy(bin + crypto_box_BOXZEROBYTES, emsg + crypto_box_NONCEBYTES, esize - crypto_box_NONCEBYTES);
+    // 1. Decode the Base64 message
 
-    result = crypto_box_open(bout, bin, bbufsize, bnonce, alice_pub, bob_sec);
-    printf("Result: %d\n", result);
-    // NULL terminate our string for printf
-    bout[crypto_box_ZEROBYTES + msize - 1] = '\0';
-    printf("Decrypted message: %s\n", bout + crypto_box_ZEROBYTES);
+    // NOTE: this base64 lib will always add a trailing 0 to strings
+    size_t bob_decode_len = Base64decode_len(alice_encode_buf) - 1;
+    char*  bob_decode_buf = malloc(bob_decode_len + 1);
+    Base64decode(bob_decode_buf, alice_encode_buf);
+    assert(bob_decode_len == alice_encrypt_buflen);
+
+    // 2. The NONCE, which Alice prefixed in her message
+    unsigned char* bob_nonce = bob_decode_buf;
+    // 3. i/o buffers
+    size_t         bob_io_len = bob_decode_len - crypto_box_NONCEBYTES + crypto_box_BOXZEROBYTES;
+    unsigned char* bob_io_buf = malloc(bob_io_len * 2);
+    unsigned char* bob_in     = bob_io_buf;
+    unsigned char* bob_out    = bob_io_buf + bob_io_len;
+    // The enrypted message, formatted with 16 padded zeros
+    memset(bob_in, 0, crypto_box_BOXZEROBYTES);
+    memcpy(
+        bob_in + crypto_box_BOXZEROBYTES,
+        bob_decode_buf + crypto_box_NONCEBYTES,
+        bob_decode_len - crypto_box_NONCEBYTES);
+
+    result = crypto_box_open(bob_out, bob_in, bob_io_len, bob_nonce, alice_pub, bob_sec);
+    assert(result == 0);
+    printf("Decrypt result: %d\n", result);
+    printf(
+        "Bob decoded & decrypted message: %.*s\n",
+        (int)(bob_io_len - crypto_box_ZEROBYTES),
+        bob_out + crypto_box_ZEROBYTES);
 
     // Hoorah!
 
-    free(emsg);
-    free(bout);
-    free(bin);
-    free(aout);
-    free(ain);
+    free(alice_encode_buf);
+    free(alice_encrypt_msg);
+    free(alice_io_buf);
+    free(bob_decode_buf);
+    free(bob_io_buf);
 
     return 0;
 }
