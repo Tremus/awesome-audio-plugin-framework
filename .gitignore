@@ -1,4 +1,7 @@
 .cache
 .DS_Store
+.vscode
 build
 examples/image_stack_blur/brain_blur.jpg
+examples/binary_compile/assets/*.c
+examples/binary_compile/assets/*.h
