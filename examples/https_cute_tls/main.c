@@ -1,6 +1,8 @@
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 #define CUTE_TLS_IMPLEMENTATION
 #include <cute_tls.h>
 
@@ -37,9 +39,9 @@ void https_read_response(struct https_response* res, TLS_Connection* conn)
 
         if ((res->size + TLS_MAX_RECORD_SIZE) >= res->capacity)
         {
-            size_t grow_amt = res->capacity > TLS_MAX_RECORD_SIZE ? res->capacity : TLS_MAX_RECORD_SIZE;
+            size_t grow_amt  = res->capacity > TLS_MAX_RECORD_SIZE ? res->capacity : TLS_MAX_RECORD_SIZE;
             res->capacity   += grow_amt;
-            res->buffer     = realloc(res->buffer, res->capacity + TLS_1_KB);
+            res->buffer      = realloc(res->buffer, res->capacity + TLS_1_KB);
         }
 
         int num_bytes_read = tls_read(*conn, res->buffer + res->size, TLS_MAX_PACKET_SIZE);
@@ -54,7 +56,7 @@ void https_read_response(struct https_response* res, TLS_Connection* conn)
     tls_disconnect(*conn);
     // NULL terminate our response body. Makes it more compatible with C
     // functions
-    res->buffer[res->size++] = '\0';
+    res->buffer[res->size++]  = '\0';
     res->capacity            += TLS_1_KB;
 
     int         version;

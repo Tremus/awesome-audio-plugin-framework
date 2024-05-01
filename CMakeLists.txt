@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.15)
 project(AAPF)
 
+if (CMAKE_C_COMPILER_ID STREQUAL "Clang")
+    add_compile_options(-Wno-deprecated)
+endif()
 #### BUILD EXAMPLES ####
 
 add_subdirectory(examples/base64_encode_decode)

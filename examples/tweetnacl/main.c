@@ -80,7 +80,7 @@ void print_b64(const char* msg, unsigned char* data, size_t datalen)
 {
     char encodebuf[256];
     assert(sizeof(encodebuf) > Base64encode_len(datalen));
-    Base64encode(encodebuf, data, datalen);
+    Base64encode(encodebuf, (const char*)data, datalen);
     printf("%s: %s\n", msg, encodebuf);
 }
 
@@ -160,7 +160,7 @@ int main()
     assert(bob_decode_len == alice_encrypt_buflen);
 
     // 2. The NONCE, which Alice prefixed in her message
-    unsigned char* bob_nonce = bob_decode_buf;
+    unsigned char* bob_nonce = (unsigned char*)bob_decode_buf;
     // 3. i/o buffers
     size_t         bob_io_len = bob_decode_len - crypto_box_NONCEBYTES + crypto_box_BOXZEROBYTES;
     unsigned char* bob_io_buf = malloc(bob_io_len * 2);

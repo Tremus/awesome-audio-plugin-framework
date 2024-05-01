@@ -3,12 +3,16 @@ project(template_cplug_pugl_nanovg VERSION 1.0.0)
 
 set(CMAKE_C_STANDARD 99)
 
-if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+if (MSVC)
     set(CMAKE_CXX_STANDARD 20) # required for c++ clap build
     add_compile_options(
         /FI ${PROJECT_SOURCE_DIR}/src/config.h
+        /DPUGL_STATIC
     )
 else()
+    add_compile_options(-include${PROJECT_SOURCE_DIR}/src/config.h)
+endif()
+if (CMAKE_C_COMPILER_ID STREQUAL "Clang")
     add_compile_options(
         -Werror=return-type
         -Werror=shadow
@@ -20,11 +24,7 @@ else()
         -Wno-writable-strings
 
         -DPUGL_STATIC
-        -include${PROJECT_SOURCE_DIR}/src/config.h
-    )
-    if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-        add_compile_options(-Werror=excess-initializers)
-    endif()
+        -Werror=excess-initializers)
 endif()
 
 set(PLUGIN_SOURCES
