@@ -87,6 +87,5 @@ The listed libraries and example code are generally biased towards:
 
 Things to add to the list:
 
--   File searching
 -   Graphics engine agnostic customisable widgets
 -   Something else? (suggest more!)
