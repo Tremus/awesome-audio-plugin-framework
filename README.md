@@ -49,6 +49,7 @@ The listed libraries and example code are generally biased towards:
 | File dialog box | [tinyfiledialogs](https://sourceforge.net/projects/tinyfiledialogs/) | zlib      | Native select file/folder dialogue boxes, alerts, colour picker & more                          |
 | File searching  | [cute_headers](https://github.com/RandyGaul/cute_headers_deprecated) | Unlicense | Recursive file & directory search. See `cute_files.h`                                           |
 | File stream     | [sokol](https://github.com/floooh/sokol)                             | zlib      | Read & write stream for local files. See `sokol_fetch.h`                                        |
+| File I/O        | [xhl](https://github.com/Tremus/xhl)                                 | Unlicense | File read/write/append, get user Desktop/Documents etc, UTF8 paths. See `files.h`               |
 | TLS             | [cute_headers](https://github.com/RandyGaul/cute_headers)            | Unlicense | HTTPS request. Lacks any parsing of responses. See `cute_tls.h`                                 |
 | HTTPS           | [curl](https://github.com/curl/curl)                                 | BSD like  | Makes HTTPS requests                                                                            |
 | HTTP parsing    | [picohttpparser](https://github.com/h2o/picohttpparser)              | MIT       | Parses HTTP1 requests & responses                                                               |
