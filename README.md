@@ -43,6 +43,8 @@ The listed libraries and example code are generally biased towards:
 | Image codecs    | [stb](https://github.com/nothings/stb)                               | MIT       | Load/decode many image formats. See `stb_image.h`, `stb_image_resize.h`, `stb_image_write.h`    |
 | Data containers | [stb](https://github.com/nothings/stb)                               | MIT       | Variable type dynamic arrays and hash maps. See `stb_ds.h`                                      |
 | Strings         | [sds](https://github.com/antirez/sds)                                | BSD-2     | Dyanamic size strings with manipulation and formatting methods.                                 |
+| UTF8            | [utf8](https://github.com/sheredom/utf8.h)                           | Unlicense | stdlib string.h, locale.h, ctype.h replacement functions for `\0` terminated UTF8 strings       |
+| UTF8            | [cute_headers](https://github.com/RandyGaul/cute_headers_deprecated) | Unlicense | UTF8 & UTF16 conversion functions. See `cute_utf8.h`                                            |
 | Crypto          | [TweetNaCl](https://tweetnacl.cr.yp.to/software.html)                | PD        | HMAC hashing, Public/Secret key encryption and signatures                                       |
 | Binary embed    | [bin2c](https://github.com/adobe/bin2c)                              | Apache 2  | CLI. Turns single file (eg. font, image) into `.c` containg `const char[]`.                     |
 | File dialog box | [osdialog](https://github.com/AndrewBelt/osdialog)                   | CC0       | Native select file/folder dialogue boxes, alerts, colour picker & more                          |
