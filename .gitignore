@@ -1,5 +1,6 @@
 .cache
 .DS_Store
+.ideas
 .vscode
 build
 examples/image_stack_blur/brain_blur.jpg

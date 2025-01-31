@@ -20,3 +20,4 @@ add_subdirectory(examples/tinyfiledialogs_save_file)
 add_subdirectory(examples/tweetnacl)
 
 add_subdirectory(templates/cplug_pugl_nanovg)
+add_subdirectory(templates/cplug_window_nanovg)
