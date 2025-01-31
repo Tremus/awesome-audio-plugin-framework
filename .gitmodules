@@ -22,6 +22,7 @@
 [submodule "modules/CPLUG"]
 	path = modules/CPLUG
 	url = https://github.com/Tremus/CPLUG
+	branch = develop
 [submodule "modules/pugl"]
 	path = modules/pugl
 	url = https://github.com/lv2/pugl

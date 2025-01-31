@@ -80,6 +80,7 @@ elseif(WIN32)
     list(APPEND PLUGIN_SOURCES
         ${CMAKE_SOURCE_DIR}/modules/CPLUG/src/cplug_extensions/window_win.c
         )
+    list(APPEND PLUGIN_LIBRARIES d3d11 dxguid)
 endif()
 
 # Params @bundle_identifier@ and @bundle_type@ are used by the plist
@@ -147,7 +148,10 @@ if (APPLE)
 
     )
 elseif(WIN32)
-    add_library(${PROJECT_NAME}_plugin MODULE ${PLUGIN_SOURCES} src/cplug_clap.c src/cplug_vst3.c)
+    add_library(${PROJECT_NAME}_plugin MODULE ${PLUGIN_SOURCES}
+        ${CMAKE_SOURCE_DIR}/modules/CPLUG/src/cplug_clap.c
+        ${CMAKE_SOURCE_DIR}/modules/CPLUG/src/cplug_vst3.c)
+    target_link_libraries(${PROJECT_NAME}_plugin PRIVATE ${PLUGIN_LIBRARIES})
     set_target_properties(${PROJECT_NAME}_plugin PROPERTIES
         OUTPUT_NAME "${PROJECT_NAME}"
         SUFFIX .clap
@@ -174,6 +178,7 @@ if (WIN32)
         ${PLUGIN_SOURCES}
         ${CMAKE_SOURCE_DIR}/modules/CPLUG/src/cplug_standalone_win.c
         )
+    target_link_libraries(${PROJECT_NAME}_app PRIVATE ${PLUGIN_LIBRARIES})
 elseif (APPLE)
     add_executable(${PROJECT_NAME}_app MACOSX_BUNDLE
         ${PLUGIN_SOURCES}

@@ -34,7 +34,7 @@ void* cplug_createPlugin(CplugHostContext* ctx)
     p->height = 400;
     return p;
 }
-void cplug_destroyPlugin(void* _p) { Plugin* p = _p; }
+void cplug_destroyPlugin(void* _p) { free(_p); }
 
 // Channels
 uint32_t    cplug_getInputBusChannelCount(void* _p, uint32_t bus_idx) { return 2; }
@@ -60,7 +60,7 @@ void     cplug_setSampleRateAndBlockSize(void* userPlugin, double sampleRate, ui
 
 void cplug_process(void* userPlugin, CplugProcessContext* ctx)
 {
-    Plugin* p = userPlugin;
+    // Plugin* p = userPlugin;
 
     float** output = ctx->getAudioOutput(ctx, 0);
     if (!output)
@@ -142,14 +142,14 @@ void pw_tick(void* _gui)
 
     nvgBindFramebuffer(nvg, 0);
     nvgBeginFrame(nvg, window_width, window_height, 1);
-    nvgClearWithColor(nvg, (NVGcolor){0.0, 0.0, 0.0, 1.0f});
+    nvgClearWithColor(nvg, nvgRGBAf(0, 0, 0, 1));
 
     nvgBeginPath(nvg);
     float cx = window_width / 2.0f;
     float cy = window_height / 2.0f;
     float r  = (window_width > window_height ? window_height : window_width) / 2.0f;
     nvgCircle(nvg, cx, cy, r);
-    nvgFillColor(nvg, (NVGcolor){1, 1, 1, 1});
+    nvgFillColor(nvg, nvgRGBAf(1, 1, 1, 1));
     nvgFill(nvg);
 
     nvgEndFrame(nvg);
