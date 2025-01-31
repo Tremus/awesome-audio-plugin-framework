@@ -6,7 +6,7 @@ Small libraries usually follow the [Unix philosophy](https://en.wikipedia.org/wi
 
 See the [Examples](./examples) folder for code & build examples of these libraries.
 
-In future we hope to provide [plugin templates](./templates) that are built using several small libraries.
+See the [Templates](./templates) folder for ready to go, lightweight plugin templates.
 
 The listed libraries and example code are generally biased towards:
 
@@ -85,6 +85,24 @@ The listed libraries and example code are generally biased towards:
 | JSON               | [simdjson](https://github.com/simdjson/simdjson)                             | Apache 2 | Fastest JSON encode/decode                            |
 | Regex              | [hyperscan](https://github.com/intel/hyperscan)                              | BSD3     | Regex pattern matching                                |
 | File/folder window | [Portable File Dialogs](https://github.com/samhocevar/portable-file-dialogs) | WTFPL    | Native select file/folder dialogue boxes              |
+
+## Building the exmaples
+
+All examples are built using CMake
+
+Dependancies are are stored as git submodules.
+
+Several of these dependencies use their own CMake build config, and we ignore all of them, often because they're too slow and complicated. All necessary build code is written in this repo.
+
+```
+git clone https://github.com/Tremus/awesome-audio-plugin-framework
+cd awesome-audio-plugin-framework
+git submodule update --init --depth=1 --recursive
+
+cmake -B build -S .
+cd build
+cmake --build .
+```
 
 ## TODO
 
