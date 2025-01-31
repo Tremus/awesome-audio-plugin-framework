@@ -12,7 +12,7 @@ if (MSVC)
 else()
     add_compile_options(-include${PROJECT_SOURCE_DIR}/src/config.h)
 endif()
-if (CMAKE_C_COMPILER_ID STREQUAL "Clang")
+if (CMAKE_C_COMPILER_ID STREQUAL "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "AppleClang")
     add_compile_options(
         -Werror=return-type
         -Werror=shadow

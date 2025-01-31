@@ -17,19 +17,26 @@
 // https://www.kvraudio.com/forum/viewtopic.php?t=575799
 #if __arm64__
 #define DISABLE_DENORMALS
-#define ENABLE_DENORMALS
+#define RESTORE_DENORMALS
 #elif defined(_WIN32)
+// https://softwareengineering.stackexchange.com/a/337251
 #include <immintrin.h>
-#define DISABLE_DENORMALS _mm_setcsr(_mm_getcsr() & ~0x8040);
-#define ENABLE_DENORMALS _mm_setcsr(_mm_getcsr() | 0x8040);
+#define DISABLE_DENORMALS                                                                                              \
+    unsigned int oldMXCSR = _mm_getcsr();       /*read the old MXCSR setting  */                                       \
+    unsigned int newMXCSR = oldMXCSR |= 0x8040; /* set DAZ and FZ bits        */                                       \
+    _mm_setcsr(newMXCSR);                       /* write the new MXCSR setting to the MXCSR */
+#define RESTORE_DENORMALS _mm_setcsr(oldMXCSR);
 #else
 #include <fenv.h>
 #define DISABLE_DENORMALS                                                                                              \
     fenv_t _fenv;                                                                                                      \
     fegetenv(&_fenv);                                                                                                  \
     fesetenv(FE_DFL_DISABLE_SSE_DENORMS_ENV);
-#define ENABLE_DENORMALS fesetenv(&_fenv);
+#define RESTORE_DENORMALS fesetenv(&_fenv);
 #endif
+
+#define ARRLEN(a) (sizeof(a) / sizeof((a)[0]))
+#define CPLUG_EVENT_QUEUE_MASK (CPLUG_EVENT_QUEUE_SIZE - 1)
 
 typedef struct ParamInfo
 {
@@ -41,6 +48,8 @@ typedef struct ParamInfo
 
 typedef struct MyPlugin
 {
+    CplugHostContext* cplug_ctx;
+
     ParamInfo paramInfo[kParameterCount];
 
     float    sampleRate;
@@ -71,28 +80,28 @@ void sendParamEventFromMain(MyPlugin* plugin, uint32_t type, uint32_t paramIdx, 
 void cplug_libraryLoad(){};
 void cplug_libraryUnload(){};
 
-void* cplug_createPlugin()
+void* cplug_createPlugin(CplugHostContext* ctx)
 {
-    MyPlugin* plugin = (MyPlugin*)malloc(sizeof(MyPlugin));
-    memset(plugin, 0, sizeof(*plugin));
+    MyPlugin* p = (MyPlugin*)calloc(1, sizeof(MyPlugin));
+    p->cplug_ctx = ctx;
 
     // Init params
-    plugin->paramInfo[kParameterFloat].flags        = CPLUG_FLAG_PARAMETER_IS_AUTOMATABLE;
-    plugin->paramInfo[kParameterFloat].max          = 100.0f;
-    plugin->paramInfo[kParameterFloat].defaultValue = 50.0f;
+    p->paramInfo[kParameterFloat].flags        = CPLUG_FLAG_PARAMETER_IS_AUTOMATABLE;
+    p->paramInfo[kParameterFloat].max          = 100.0f;
+    p->paramInfo[kParameterFloat].defaultValue = 50.0f;
 
-    plugin->paramValuesAudio[kParameterInt] = 2.0f;
-    plugin->paramInfo[kParameterInt].flags  = CPLUG_FLAG_PARAMETER_IS_AUTOMATABLE | CPLUG_FLAG_PARAMETER_IS_INTEGER;
-    plugin->paramInfo[kParameterInt].min    = 2.0f;
-    plugin->paramInfo[kParameterInt].max    = 5.0f;
-    plugin->paramInfo[kParameterInt].defaultValue = 2.0f;
+    p->paramValuesAudio[kParameterInt] = 2.0f;
+    p->paramInfo[kParameterInt].flags  = CPLUG_FLAG_PARAMETER_IS_AUTOMATABLE | CPLUG_FLAG_PARAMETER_IS_INTEGER;
+    p->paramInfo[kParameterInt].min    = 2.0f;
+    p->paramInfo[kParameterInt].max    = 5.0f;
+    p->paramInfo[kParameterInt].defaultValue = 2.0f;
 
-    plugin->paramInfo[kParameterBool].flags = CPLUG_FLAG_PARAMETER_IS_BOOL;
-    plugin->paramInfo[kParameterBool].max   = 1.0f;
+    p->paramInfo[kParameterBool].flags = CPLUG_FLAG_PARAMETER_IS_BOOL;
+    p->paramInfo[kParameterBool].max   = 1.0f;
 
-    plugin->midiNote = -1;
+    p->midiNote = -1;
 
-    return plugin;
+    return p;
 }
 void cplug_destroyPlugin(void* ptr)
 {
@@ -134,12 +143,15 @@ const char* cplug_getOutputBusName(void* ptr, uint32_t idx)
 /* --------------------------------------------------------------------------------------------------------
  * Parameters */
 
+ uint32_t cplug_getParameterID(void* ptr, uint32_t paramIndex) { return paramIndex; }
+
 const char* cplug_getParameterName(void* ptr, uint32_t index)
 {
     static const char* param_names[CPLUG_NUM_PARAMS] = {
         "Example Float Parameter",
         "Example Int Parameter",
         "Example Bool Parameter"};
+    _Static_assert(ARRLEN(param_names) == CPLUG_NUM_PARAMS, "Invalid length");
     return param_names[index];
 }
 
@@ -175,7 +187,7 @@ void cplug_setParameterValue(void* ptr, uint32_t index, double value)
         int queueWritePos = cplug_atomic_load_i32(&plugin->audioToMainHead) & CPLUG_EVENT_QUEUE_MASK;
 
         plugin->audioToMainQueue[queueWritePos].parameter.type  = CPLUG_EVENT_PARAM_CHANGE_UPDATE;
-        plugin->audioToMainQueue[queueWritePos].parameter.idx   = index;
+        plugin->audioToMainQueue[queueWritePos].parameter.id   = index;
         plugin->audioToMainQueue[queueWritePos].parameter.value = value;
 
         cplug_atomic_fetch_add_i32(&plugin->audioToMainHead, 1);
@@ -282,7 +294,7 @@ void cplug_process(void* ptr, CplugProcessContext* ctx)
         CplugEvent* event = &plugin->mainToAudioQueue[tail];
 
         if (event->type == CPLUG_EVENT_PARAM_CHANGE_UPDATE)
-            plugin->paramValuesAudio[event->parameter.idx] = event->parameter.value;
+            plugin->paramValuesAudio[event->parameter.id] = event->parameter.value;
 
         ctx->enqueueEvent(ctx, event, 0);
 
@@ -299,7 +311,7 @@ void cplug_process(void* ptr, CplugProcessContext* ctx)
         switch (event.type)
         {
         case CPLUG_EVENT_PARAM_CHANGE_UPDATE:
-            cplug_setParameterValue(plugin, event.parameter.idx, event.parameter.value);
+            cplug_setParameterValue(plugin, event.parameter.id, event.parameter.value);
             break;
         case CPLUG_EVENT_MIDI:
         {
@@ -372,7 +384,7 @@ void cplug_process(void* ptr, CplugProcessContext* ctx)
             break;
         }
     }
-    ENABLE_DENORMALS
+    RESTORE_DENORMALS
 }
 
 /* --------------------------------------------------------------------------------------------------------
@@ -406,12 +418,12 @@ void cplug_loadState(void* userPlugin, const void* stateCtx, cplug_readProc read
     }
 }
 
-void sendParamEventFromMain(MyPlugin* plugin, uint32_t type, uint32_t paramIdx, double value)
+void sendParamEventFromMain(MyPlugin* plugin, uint32_t type, uint32_t paramId, double value)
 {
     int         mainToAudioHead = cplug_atomic_load_i32(&plugin->mainToAudioHead) & CPLUG_EVENT_QUEUE_MASK;
     CplugEvent* paramEvent      = &plugin->mainToAudioQueue[mainToAudioHead];
     paramEvent->parameter.type  = type;
-    paramEvent->parameter.idx   = paramIdx;
+    paramEvent->parameter.id    = paramId;
     paramEvent->parameter.value = value;
 
     cplug_atomic_fetch_add_i32(&plugin->mainToAudioHead, 1);
@@ -420,15 +432,102 @@ void sendParamEventFromMain(MyPlugin* plugin, uint32_t type, uint32_t paramIdx, 
     // request_flush from CLAP host? Doesn't seem to be required
 }
 
-struct MyGUI
+typedef struct MyGUI
 {
-    uint32_t    width, height;
+    MyPlugin*   plugin;
     PuglWorld*  world;
     PuglView*   view;
     NVGcontext* nvg;
-    int         mainFramebuffer;
-    float       pixelRatio;
-};
+    uint32_t    width, height;
+
+    int   mainFramebuffer;
+    float pixelRatio;
+
+    int  dragParamId;
+    bool mouseDragging;
+    int  dragStartX;
+    int  dragStartY;
+
+    double dragStartParamNormalised;
+    double dragCurrentParamNormalised;
+} MyGUI;
+
+bool tickGUI(MyGUI* gui)
+{
+    bool needRedraw = false;
+
+    MyPlugin* plugin = gui->plugin;
+    int       head   = cplug_atomic_load_i32(&plugin->audioToMainHead) & CPLUG_EVENT_QUEUE_MASK;
+    int       tail   = cplug_atomic_load_i32(&plugin->audioToMainTail);
+
+    needRedraw = tail != head;
+
+    while (tail != head)
+    {
+        CplugEvent* event = &plugin->audioToMainQueue[tail];
+
+        switch (event->type)
+        {
+        case CPLUG_EVENT_PARAM_CHANGE_UPDATE:
+        {
+            uint32_t idx                 = event->parameter.id;
+            plugin->paramValuesMain[idx] = (float)event->parameter.value;
+            break;
+        }
+        default:
+            break;
+        }
+
+        tail++;
+        tail &= CPLUG_EVENT_QUEUE_MASK;
+    }
+    cplug_atomic_exchange_i32(&plugin->audioToMainTail, tail);
+
+    return needRedraw;
+}
+
+static void handleMouseDown(MyGUI* gui, int x, int y)
+{
+    if (x >= 10 && x < 40 && y >= 10 && y < 40)
+    {
+        gui->mouseDragging = true;
+        gui->dragParamId   = 0;
+        gui->dragStartX    = x;
+        gui->dragStartY    = y;
+
+        double v                        = cplug_getParameterValue(gui->plugin, gui->dragParamId);
+        gui->dragStartParamNormalised   = cplug_normaliseParameterValue(gui->plugin, gui->dragParamId, v);
+        gui->dragCurrentParamNormalised = gui->dragStartParamNormalised;
+
+        sendParamEventFromMain(gui->plugin, CPLUG_EVENT_PARAM_CHANGE_BEGIN, gui->dragParamId, 0);
+    }
+}
+
+static void handleMouseUp(MyGUI* gui)
+{
+    if (gui->mouseDragging)
+    {
+        gui->mouseDragging = false;
+        sendParamEventFromMain(gui->plugin, CPLUG_EVENT_PARAM_CHANGE_END, gui->dragParamId, 0);
+    }
+}
+
+static void handleMouseMove(MyGUI* gui, int x, int y)
+{
+    if (gui->mouseDragging)
+    {
+        double nextValNormalised = gui->dragStartParamNormalised + (gui->dragStartY - y) * 0.01;
+        if (nextValNormalised < 0)
+            nextValNormalised = 0;
+        if (nextValNormalised > 1)
+            nextValNormalised = 1;
+        gui->dragCurrentParamNormalised = nextValNormalised;
+
+        double nextValDenormalised = cplug_denormaliseParameterValue(gui->plugin, gui->dragParamId, nextValNormalised);
+        gui->plugin->paramValuesMain[gui->dragParamId] = (float)nextValDenormalised;
+        sendParamEventFromMain(gui->plugin, CPLUG_EVENT_PARAM_CHANGE_UPDATE, gui->dragParamId, nextValDenormalised);
+    }
+}
 
 void drawFrame(struct MyGUI* gui)
 {
@@ -437,11 +536,25 @@ void drawFrame(struct MyGUI* gui)
     nvgBindFramebuffer(nvg, gui->mainFramebuffer);
     nvgBeginFrame(nvg, gui->width, gui->height, gui->pixelRatio);
 
-    nvgClearWithColor(nvg, (NVGcolor){0.8f, 0.2f, 0.8f, 1.0f});
+    const NVGcolor colourBG    = {0.8f, 0.2f, 0.8f, 1.0f};
+    const NVGcolor colourParam = {0.2f, 0.8f, 0.2f, 1.0f};
+
+
+    nvgClearWithColor(nvg, colourBG);
 
     nvgBeginPath(nvg);
-    nvgFillColor(nvg, (NVGcolor){1.0f, 0.0f, 0.0f, 1.0f});
+    nvgStrokeColor(nvg, colourParam);
+
+    // Param border
     nvgRect(nvg, 10, 10, 40, 40);
+    nvgStroke(nvg);
+
+    // Param amount
+    nvgBeginPath(nvg);
+    float denorm = gui->plugin->paramValuesMain[0];
+    float norm   = cplug_normaliseParameterValue(gui->plugin, 0, denorm);
+    nvgFillColor(nvg, colourParam);
+    nvgRect(nvg, 10, 10 + (1 - norm) * 40, 40, norm * 40);
     nvgFill(nvg);
 
     nvgEndFrame(nvg);
@@ -522,6 +635,20 @@ PuglStatus myPuglEventFunc(PuglView* view, const PuglEvent* event)
         double scaleFactor = puglGetScaleFactor(gui->view);
         double x = event->motion.x / scaleFactor;
         double y = event->motion.y / scaleFactor;
+        handleMouseMove(gui, x, y);
+        break;
+    }
+    case PUGL_BUTTON_PRESS:
+    {
+        double scaleFactor = puglGetScaleFactor(gui->view);
+        double x = event->motion.x / scaleFactor;
+        double y = event->motion.y / scaleFactor;
+        handleMouseDown(gui, x, y);
+        break;
+    }
+    case PUGL_BUTTON_RELEASE:
+    {
+        handleMouseUp(gui);
         break;
     }
     case PUGL_UPDATE:
@@ -529,6 +656,7 @@ PuglStatus myPuglEventFunc(PuglView* view, const PuglEvent* event)
     case PUGL_EXPOSE:
         break;
     case PUGL_TIMER:
+        tickGUI(gui);
         drawFrame(gui);
         presentFrame(gui);
         break;
@@ -543,6 +671,7 @@ void* cplug_createGUI(void* userPlugin)
 {
     struct MyGUI* gui = calloc(1, sizeof(struct MyGUI));
 
+    gui->plugin = userPlugin;
     gui->width  = 640;
     gui->height = 360;
 
