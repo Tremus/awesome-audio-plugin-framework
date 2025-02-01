@@ -8,21 +8,23 @@ endif()
 
 if (CMAKE_C_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC")
     add_compile_options(/W3 /FI ${CMAKE_CURRENT_SOURCE_DIR}/plugin.h)
-    set(WINDOWS_EXPORT_ALL_SYMBOLS FALSE)
 else()
-    add_compile_options(
-        -Werror=return-type
-        -Werror=shadow
-        -Wunused-function
+    add_compile_options(-include${CMAKE_CURRENT_SOURCE_DIR}/plugin.h)
+endif()
+if (NOT ${CMAKE_C_COMPILER_ID} STREQUAL "MSVC")
+add_compile_options(
+    -Werror=return-type
+    -Werror=shadow
+    -Wunused-function
 
-        -Wno-deprecated
-        -Wno-multichar
-        -Wno-nullability-completeness
-        -Wno-writable-strings
-
-        -include${CMAKE_CURRENT_SOURCE_DIR}/plugin.h
+    -Wno-deprecated
+    -Wno-multichar
+    -Wno-nullability-completeness
+    -Wno-writable-strings
+    -Wno-microsoft-enum-forward-reference
     )
 endif()
+message(${CMAKE_C_COMPILER_ID})
 
 if (WIN32)
     add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
