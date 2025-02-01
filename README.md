@@ -18,7 +18,7 @@ The listed libraries and example code are generally biased towards:
 
 | Function        | Name                                                                 | License   | Description                                                                                     |
 | --------------- | -------------------------------------------------------------------- | --------- | ----------------------------------------------------------------------------------------------- |
-| Plugin wrapper  | [CPLUG](https://github.com/Tremus/CPLUG)                             | Unlicense | Wrapper for VST3, AUv2 & CLAP. Includes standalone builds with hot reloading                    |
+| Plugin wrapper  | [CPLUG](https://github.com/Tremus/CPLUG)                             | Unlicense | Wrapper for VST3, AUv2, CLAP, standalone. Includes optional window lib for plugins                 |
 | Window          | [Pugl](https://github.com/lv2/pugl)                                  | ISC       | Native window with mouse & keyboard callbacks. Made with plugins in mind                        |
 | Window          | [sokol](https://github.com/floooh/sokol)                             | zlib      | Native window with mouse & keyboard callbacks. Made with games in mind. See: `sokol_app.h`.     |
 | VST3            | [vst3_c_api](https://github.com/steinbergmedia/vst3_c_api)           | Dual      | VST3 wrapper                                                                                    |
