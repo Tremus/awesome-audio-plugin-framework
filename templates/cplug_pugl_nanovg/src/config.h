@@ -24,7 +24,6 @@
 
 #define CPLUG_AUV2_VIEW_CLASS     CPLUGPuglView
 #define CPLUG_AUV2_VIEW_CLASS_STR "CPLUGPuglNanoVGView"
-static const unsigned kAudioUnitProperty_UserPlugin = 'plug';
 
 #define CPLUG_CLAP_ID          "com.aapf.CPLUGPuglNanoVG"
 #define CPLUG_CLAP_DESCRIPTION "Example plugin"

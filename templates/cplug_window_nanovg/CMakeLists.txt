@@ -1,4 +1,7 @@
-project(template_cplug_window_nanovg VERSION 1.0.0 LANGUAGES C)
+project(template_cplug_window_nanovg
+    VERSION 1.0.0
+    DESCRIPTION "Project template using CPLUG & NanoVG"
+    LANGUAGES C)
 set(CMAKE_C_STANDARD 99)
 
 if (APPLE)
@@ -24,7 +27,6 @@ add_compile_options(
     -Wno-microsoft-enum-forward-reference
     )
 endif()
-message(${CMAKE_C_COMPILER_ID})
 
 if (WIN32)
     add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
@@ -33,18 +35,17 @@ endif()
 file(RELATIVE_PATH project_rel_path ${CMAKE_SOURCE_DIR} ${PROJECT_SOURCE_DIR})
 set(OUTPUT_PATH ${CMAKE_BINARY_DIR}/${project_rel_path})
 
-# set(PROJECT_NAME "cplug_example")
-set(PRODUCT_DESCRIPTION ${PROJECT_NAME})
-set(PRODUCT_COPYRIGHT CPLUG)
-set(PLUGIN_BUNDLE_ID "com.cplug.windownanovg.plugin")
-set(APP_BUNDLE_ID "com.cplug.windownanovg.app")
+set(PRODUCT_NAME "CPLUG + NanoVG")
+set(PRODUCT_COPYRIGHT AAPG)
+set(PLUGIN_BUNDLE_ID "com.aapf.windownanovg.plugin")
+set(APP_BUNDLE_ID "com.aapf.windownanovg.app")
 # Full list of AU types & tags here:
 # https://developer.apple.com/library/archive/documentation/General/Conceptual/ExtensibilityPG/AudioUnit.html
 # The properties:
-set(MACOSX_BUNDLE_TAGS "<string>Synthesizer</string>") # Predefined tags are: Bass, Delay, Distortion, Drums, Dynamics, Dynamics Processor, Effects, Equalizer, Filter, Format Converter, Guitar, Imaging, MIDI, Mixer, Offline Effect, Output, Panner, Pitch, Reverb, Sampler, Synthesizer, Time Effect, Vocal. But you can use others.
-set(MACOSX_BUNDLE_TYPE "aumu") # "aufx" for Effect, "augn" for Generator, "aumu" for Instrument, "aufm" for Music Effect.
+set(MACOSX_BUNDLE_TAGS "<string>Effects</string>") # Predefined tags are: Bass, Delay, Distortion, Drums, Dynamics, Dynamics Processor, Effects, Equalizer, Filter, Format Converter, Guitar, Imaging, MIDI, Mixer, Offline Effect, Output, Panner, Pitch, Reverb, Sampler, Synthesizer, Time Effect, Vocal. But you can use others.
+set(MACOSX_BUNDLE_TYPE "aufx") # "aufx" for Effect, "augn" for Generator, "aumu" for Instrument, "aufm" for Music Effect.
 set(MACOSX_BUNDLE_SUBTYPE "Xmpl") # For AU and GarageBand 10.3 compatibility, the first letter must be upper-case, the others lower-case.
-set(MACOSX_BUNDLE_MANUFACTURER "Cplg") # For AU and GarageBand 10.3 compatibility, the first letter must be upper-case, the others lower-case.
+set(MACOSX_BUNDLE_MANUFACTURER "Aapf") # For AU and GarageBand 10.3 compatibility, the first letter must be upper-case, the others lower-case.
 # Convert version string (1.0.0) > integer (65536)
 math(EXPR MACOSX_BUNDLE_VERSION_INT "${PROJECT_VERSION_MAJOR} << 16 | ${PROJECT_VERSION_MINOR} << 8 | ${PROJECT_VERSION_PATCH}" OUTPUT_FORMAT DECIMAL) # cool trick bro
 

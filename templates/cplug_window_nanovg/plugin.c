@@ -176,16 +176,3 @@ bool pw_event(const PWEvent* event)
     }
     return false;
 }
-
-// TODO: deprecate cplug_getResizeHints.
-// The Cplug window extension makes this clap function redundant
-bool cplug_getResizeHints(
-    void*     userGUI,
-    bool*     resizableX,
-    bool*     resizableY,
-    bool*     preserveAspectRatio,
-    uint32_t* aspectRatioX,
-    uint32_t* aspectRatioY)
-{
-    return false;
-}

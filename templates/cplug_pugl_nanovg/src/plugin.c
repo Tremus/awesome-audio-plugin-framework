@@ -35,7 +35,7 @@
 #define RESTORE_DENORMALS fesetenv(&_fenv);
 #endif
 
-#define ARRLEN(a) (sizeof(a) / sizeof((a)[0]))
+#define ARRLEN(a)              (sizeof(a) / sizeof((a)[0]))
 #define CPLUG_EVENT_QUEUE_MASK (CPLUG_EVENT_QUEUE_SIZE - 1)
 
 typedef struct ParamInfo
@@ -77,12 +77,12 @@ typedef struct MyPlugin
 
 void sendParamEventFromMain(MyPlugin* plugin, uint32_t type, uint32_t paramIdx, double value);
 
-void cplug_libraryLoad(){};
-void cplug_libraryUnload(){};
+void cplug_libraryLoad() {};
+void cplug_libraryUnload() {};
 
 void* cplug_createPlugin(CplugHostContext* ctx)
 {
-    MyPlugin* p = (MyPlugin*)calloc(1, sizeof(MyPlugin));
+    MyPlugin* p  = (MyPlugin*)calloc(1, sizeof(MyPlugin));
     p->cplug_ctx = ctx;
 
     // Init params
@@ -90,10 +90,10 @@ void* cplug_createPlugin(CplugHostContext* ctx)
     p->paramInfo[kParameterFloat].max          = 100.0f;
     p->paramInfo[kParameterFloat].defaultValue = 50.0f;
 
-    p->paramValuesAudio[kParameterInt] = 2.0f;
-    p->paramInfo[kParameterInt].flags  = CPLUG_FLAG_PARAMETER_IS_AUTOMATABLE | CPLUG_FLAG_PARAMETER_IS_INTEGER;
-    p->paramInfo[kParameterInt].min    = 2.0f;
-    p->paramInfo[kParameterInt].max    = 5.0f;
+    p->paramValuesAudio[kParameterInt]       = 2.0f;
+    p->paramInfo[kParameterInt].flags        = CPLUG_FLAG_PARAMETER_IS_AUTOMATABLE | CPLUG_FLAG_PARAMETER_IS_INTEGER;
+    p->paramInfo[kParameterInt].min          = 2.0f;
+    p->paramInfo[kParameterInt].max          = 5.0f;
     p->paramInfo[kParameterInt].defaultValue = 2.0f;
 
     p->paramInfo[kParameterBool].flags = CPLUG_FLAG_PARAMETER_IS_BOOL;
@@ -143,7 +143,7 @@ const char* cplug_getOutputBusName(void* ptr, uint32_t idx)
 /* --------------------------------------------------------------------------------------------------------
  * Parameters */
 
- uint32_t cplug_getParameterID(void* ptr, uint32_t paramIndex) { return paramIndex; }
+uint32_t cplug_getParameterID(void* ptr, uint32_t paramIndex) { return paramIndex; }
 
 const char* cplug_getParameterName(void* ptr, uint32_t index)
 {
@@ -187,7 +187,7 @@ void cplug_setParameterValue(void* ptr, uint32_t index, double value)
         int queueWritePos = cplug_atomic_load_i32(&plugin->audioToMainHead) & CPLUG_EVENT_QUEUE_MASK;
 
         plugin->audioToMainQueue[queueWritePos].parameter.type  = CPLUG_EVENT_PARAM_CHANGE_UPDATE;
-        plugin->audioToMainQueue[queueWritePos].parameter.id   = index;
+        plugin->audioToMainQueue[queueWritePos].parameter.id    = index;
         plugin->audioToMainQueue[queueWritePos].parameter.value = value;
 
         cplug_atomic_fetch_add_i32(&plugin->audioToMainHead, 1);
@@ -539,7 +539,6 @@ void drawFrame(struct MyGUI* gui)
     const NVGcolor colourBG    = {0.8f, 0.2f, 0.8f, 1.0f};
     const NVGcolor colourParam = {0.2f, 0.8f, 0.2f, 1.0f};
 
-
     nvgClearWithColor(nvg, colourBG);
 
     nvgBeginPath(nvg);
@@ -599,14 +598,15 @@ PuglStatus myPuglEventFunc(PuglView* view, const PuglEvent* event)
     case PUGL_REALIZE:
     {
         gui->pixelRatio = NVG_DEFAULT_PIXEL_RATIO;
-        gui->nvg = nvgCreateContext(
+        gui->nvg        = nvgCreateContext(
             (void*)puglGetNativeView(gui->view),
             NVG_DEFAULT_CONTEXT_FLAGS,
             gui->pixelRatio * gui->width,
             gui->pixelRatio * gui->height);
         my_assert(gui->nvg != NULL);
 
-        gui->mainFramebuffer = nvgCreateFramebuffer(gui->nvg, gui->pixelRatio * gui->width, gui->pixelRatio * gui->height, 0);
+        gui->mainFramebuffer =
+            nvgCreateFramebuffer(gui->nvg, gui->pixelRatio * gui->width, gui->pixelRatio * gui->height, 0);
         my_assert(gui->mainFramebuffer != 0);
         break;
     }
@@ -625,24 +625,29 @@ PuglStatus myPuglEventFunc(PuglView* view, const PuglEvent* event)
         {
             if (gui->mainFramebuffer != 0)
                 nvgDeleteFramebuffer(gui->nvg, gui->mainFramebuffer);
-            nvgSetViewBounds(gui->nvg, (void*)puglGetNativeView(gui->view), gui->pixelRatio * gui->width, gui->pixelRatio * gui->height);
-            gui->mainFramebuffer = nvgCreateFramebuffer(gui->nvg, gui->pixelRatio * gui->width, gui->pixelRatio * gui->height, 0);
+            nvgSetViewBounds(
+                gui->nvg,
+                (void*)puglGetNativeView(gui->view),
+                gui->pixelRatio * gui->width,
+                gui->pixelRatio * gui->height);
+            gui->mainFramebuffer =
+                nvgCreateFramebuffer(gui->nvg, gui->pixelRatio * gui->width, gui->pixelRatio * gui->height, 0);
         }
         break;
     }
     case PUGL_MOTION:
     {
         double scaleFactor = puglGetScaleFactor(gui->view);
-        double x = event->motion.x / scaleFactor;
-        double y = event->motion.y / scaleFactor;
+        double x           = event->motion.x / scaleFactor;
+        double y           = event->motion.y / scaleFactor;
         handleMouseMove(gui, x, y);
         break;
     }
     case PUGL_BUTTON_PRESS:
     {
         double scaleFactor = puglGetScaleFactor(gui->view);
-        double x = event->motion.x / scaleFactor;
-        double y = event->motion.y / scaleFactor;
+        double x           = event->motion.x / scaleFactor;
+        double y           = event->motion.y / scaleFactor;
         handleMouseDown(gui, x, y);
         break;
     }
@@ -751,25 +756,11 @@ void cplug_checkSize(void* userGUI, uint32_t* width, uint32_t* height)
 bool cplug_setSize(void* userGUI, uint32_t width, uint32_t height)
 {
     struct MyGUI* gui = userGUI;
-    gui->width = width;
-    gui->height = height;
+    gui->width        = width;
+    gui->height       = height;
 
-    double scaleFactor = puglGetScaleFactor(gui->view);
-    PuglRect rect = {0, 0, width * scaleFactor, height * scaleFactor};
+    double   scaleFactor = puglGetScaleFactor(gui->view);
+    PuglRect rect        = {0, 0, width * scaleFactor, height * scaleFactor};
 
     return PUGL_SUCCESS == puglSetFrame(gui->view, rect);
-}
-
-bool cplug_getResizeHints(
-    void*     userGUI,
-    bool*     resizableX,
-    bool*     resizableY,
-    bool*     preserveAspectRatio,
-    uint32_t* aspectRatioX,
-    uint32_t* aspectRatioY)
-{
-    *resizableX          = true;
-    *resizableY          = true;
-    *preserveAspectRatio = false;
-    return true;
 }
