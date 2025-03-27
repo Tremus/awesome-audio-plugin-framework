@@ -126,18 +126,14 @@ uint32_t cplug_getOutputBusChannelCount(void* ptr, uint32_t idx)
     return 0;
 }
 
-const char* cplug_getInputBusName(void* ptr, uint32_t idx)
+void cplug_getInputBusName(void* ptr, uint32_t idx, char* buf, size_t buflen)
 {
-    if (idx == 0)
-        return "Stereo Input";
-    return "";
+    snprintf(buf, buflen, "%s", "Stereo Input");
 }
 
-const char* cplug_getOutputBusName(void* ptr, uint32_t idx)
+void cplug_getOutputBusName(void* ptr, uint32_t idx, char* buf, size_t buflen)
 {
-    if (idx == 0)
-        return "Stereo Output";
-    return "";
+    snprintf(buf, buflen, "%s", "Stereo Output");
 }
 
 /* --------------------------------------------------------------------------------------------------------
@@ -145,14 +141,14 @@ const char* cplug_getOutputBusName(void* ptr, uint32_t idx)
 
 uint32_t cplug_getParameterID(void* ptr, uint32_t paramIndex) { return paramIndex; }
 
-const char* cplug_getParameterName(void* ptr, uint32_t index)
+void cplug_getParameterName(void* ptr, uint32_t paramId, char* buf, size_t buflen)
 {
     static const char* param_names[CPLUG_NUM_PARAMS] = {
         "Example Float Parameter",
         "Example Int Parameter",
         "Example Bool Parameter"};
-    _Static_assert(ARRLEN(param_names) == CPLUG_NUM_PARAMS, "Invalid length");
-    return param_names[index];
+    _Static_assert(ARRLEN(param_names) == CPLUG_NUM_PARAMS, "Did you add new parameters?");
+    snprintf(buf, buflen, "%s", param_names[paramId]);
 }
 
 double cplug_getParameterValue(void* ptr, uint32_t index)

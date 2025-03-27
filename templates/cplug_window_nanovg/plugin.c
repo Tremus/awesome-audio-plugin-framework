@@ -37,22 +37,22 @@ void* cplug_createPlugin(CplugHostContext* ctx)
 void cplug_destroyPlugin(void* _p) { free(_p); }
 
 // Channels
-uint32_t    cplug_getInputBusChannelCount(void* _p, uint32_t bus_idx) { return 2; }
-uint32_t    cplug_getOutputBusChannelCount(void* _p, uint32_t bus_idx) { return 2; }
-const char* cplug_getInputBusName(void* ptr, uint32_t idx) { return ""; }
-const char* cplug_getOutputBusName(void* ptr, uint32_t idx) { return ""; }
+uint32_t cplug_getInputBusChannelCount(void* _p, uint32_t bus_idx) { return 2; }
+uint32_t cplug_getOutputBusChannelCount(void* _p, uint32_t bus_idx) { return 2; }
+void     cplug_getInputBusName(void* ptr, uint32_t idx, char* buf, size_t buflen) { snprintf(buf, buflen, "Input"); }
+void     cplug_getOutputBusName(void* ptr, uint32_t idx, char* buf, size_t buflen) { snprintf(buf, buflen, "Output"); }
 // Parameters
-uint32_t    cplug_getParameterID(void* ptr, uint32_t paramIndex) { return 0; }
-uint32_t    cplug_getParameterFlags(void* ptr, uint32_t paramId) { return 0; }
-const char* cplug_getParameterName(void* ptr, uint32_t paramId) { return ""; }
-void        cplug_getParameterRange(void* ptr, uint32_t paramId, double* min, double* max) {}
-double      cplug_denormaliseParameterValue(void* ptr, uint32_t paramId, double normalised) { return 0; }
-double      cplug_normaliseParameterValue(void* ptr, uint32_t paramId, double value) { return 0; }
-double      cplug_getDefaultParameterValue(void* ptr, uint32_t paramId) { return 0; }
-double      cplug_getParameterValue(void* ptr, uint32_t paramId) { return 0; }
-double      cplug_parameterStringToValue(void* ptr, uint32_t paramId, const char* str) { return 0; }
-void        cplug_parameterValueToString(void* ptr, uint32_t paramId, char* buf, size_t bufsize, double value) {}
-void        cplug_setParameterValue(void* ptr, uint32_t paramId, double value) {}
+uint32_t cplug_getParameterID(void* ptr, uint32_t paramIndex) { return 0; }
+uint32_t cplug_getParameterFlags(void* ptr, uint32_t paramId) { return 0; }
+void     cplug_getParameterName(void* ptr, uint32_t paramId, char* buf, size_t buflen) { snprintf(buf, buflen, ""); }
+void     cplug_getParameterRange(void* ptr, uint32_t paramId, double* min, double* max) {}
+double   cplug_denormaliseParameterValue(void* ptr, uint32_t paramId, double normalised) { return 0; }
+double   cplug_normaliseParameterValue(void* ptr, uint32_t paramId, double value) { return 0; }
+double   cplug_getDefaultParameterValue(void* ptr, uint32_t paramId) { return 0; }
+double   cplug_getParameterValue(void* ptr, uint32_t paramId) { return 0; }
+double   cplug_parameterStringToValue(void* ptr, uint32_t paramId, const char* str) { return 0; }
+void     cplug_parameterValueToString(void* ptr, uint32_t paramId, char* buf, size_t bufsize, double value) {}
+void     cplug_setParameterValue(void* ptr, uint32_t paramId, double value) {}
 // Audio
 uint32_t cplug_getLatencyInSamples(void* ptr) { return 0; }
 uint32_t cplug_getTailInSamples(void* ptr) { return 0; }
