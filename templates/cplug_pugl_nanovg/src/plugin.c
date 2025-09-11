@@ -111,7 +111,8 @@ void cplug_destroyPlugin(void* ptr)
 
 /* --------------------------------------------------------------------------------------------------------
  * Busses */
-
+uint32_t cplug_getNumInputBusses(void* ptr) { return 1; }
+uint32_t cplug_getNumOutputBusses(void* ptr) { return 1; }
 uint32_t cplug_getInputBusChannelCount(void* ptr, uint32_t idx)
 {
     if (idx == 0)
@@ -138,6 +139,12 @@ void cplug_getOutputBusName(void* ptr, uint32_t idx, char* buf, size_t buflen)
 
 /* --------------------------------------------------------------------------------------------------------
  * Parameters */
+
+uint32_t cplug_getNumParameters(void* ptr)
+{
+    MyPlugin* p = ptr;
+    return ARRLEN(p->paramInfo);
+}
 
 uint32_t cplug_getParameterID(void* ptr, uint32_t paramIndex) { return paramIndex; }
 

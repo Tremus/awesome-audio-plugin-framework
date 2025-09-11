@@ -39,9 +39,12 @@ void cplug_destroyPlugin(void* _p) { free(_p); }
 // Channels
 uint32_t cplug_getInputBusChannelCount(void* _p, uint32_t bus_idx) { return 2; }
 uint32_t cplug_getOutputBusChannelCount(void* _p, uint32_t bus_idx) { return 2; }
+uint32_t cplug_getNumInputBusses(void* ptr) { return 1; }
+uint32_t cplug_getNumOutputBusses(void* ptr) { return 1; }
 void     cplug_getInputBusName(void* ptr, uint32_t idx, char* buf, size_t buflen) { snprintf(buf, buflen, "Input"); }
 void     cplug_getOutputBusName(void* ptr, uint32_t idx, char* buf, size_t buflen) { snprintf(buf, buflen, "Output"); }
 // Parameters
+uint32_t cplug_getNumParameters(void* ptr) { return 0; }
 uint32_t cplug_getParameterID(void* ptr, uint32_t paramIndex) { return 0; }
 uint32_t cplug_getParameterFlags(void* ptr, uint32_t paramId) { return 0; }
 void     cplug_getParameterName(void* ptr, uint32_t paramId, char* buf, size_t buflen) { snprintf(buf, buflen, ""); }
