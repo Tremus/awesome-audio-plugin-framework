@@ -207,7 +207,7 @@ int main()
         struct https_response res = {0};
         xrequest(get_hostname, 443, (const char*)req_buffer, req_len, &res, my_cb_xreq);
 
-        fprintf(stderr, "Response size: %zu\n", res.size);
+        fprintf(stderr, "Response size: %llu\n", res.size);
 
         if (res.buffer || res.size || res.capacity)
         {
