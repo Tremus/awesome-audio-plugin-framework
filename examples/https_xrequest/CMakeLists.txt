@@ -1,0 +1,14 @@
+cmake_minimum_required(VERSION 3.15)
+project(https_xrequest VERSION 0.0.1 LANGUAGES C)
+set(CMAKE_C_STANDARD 99)
+
+add_executable(https_xrequest main.c)
+if (WIN32)
+    target_link_libraries(https_xrequest "Secur32" "Ws2_32")
+elseif(APPLE)
+    target_link_libraries(https_xrequest "-framework Security")
+else()
+    message(FATAL_ERROR "OS not supported")
+endif()
+
+target_include_directories(https_xrequest PRIVATE ../../modules/wip_libs/src)

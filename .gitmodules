@@ -29,3 +29,6 @@
 [submodule "modules/nanovg_compat"]
 	path = modules/nanovg_compat
 	url = https://github.com/Tremus/nanovg_compat
+[submodule "modules/wip_libs"]
+	path = modules/wip_libs
+	url = https://github.com/Tremus/wip_libs
