@@ -18,7 +18,7 @@ The listed libraries and example code are generally biased towards:
 
 | Function        | Name                                                                 | License   | Description                                                                                     |
 | --------------- | -------------------------------------------------------------------- | --------- | ----------------------------------------------------------------------------------------------- |
-| Plugin wrapper  | [CPLUG](https://github.com/Tremus/CPLUG)                             | Unlicense | Wrapper for VST3, AUv2, CLAP, standalone. Includes optional window lib for plugins                 |
+| Plugin wrapper  | [CPLUG](https://github.com/Tremus/CPLUG)                             | Unlicense | Wrapper for VST3, AUv2, CLAP, standalone. Includes optional window lib for plugins              |
 | Window          | [Pugl](https://github.com/lv2/pugl)                                  | ISC       | Native window with mouse & keyboard callbacks. Made with plugins in mind                        |
 | Window          | [sokol](https://github.com/floooh/sokol)                             | zlib      | Native window with mouse & keyboard callbacks. Made with games in mind. See: `sokol_app.h`.     |
 | VST3            | [vst3_c_api](https://github.com/steinbergmedia/vst3_c_api)           | Dual      | VST3 wrapper                                                                                    |
@@ -39,6 +39,11 @@ The listed libraries and example code are generally biased towards:
 | Audio IO        | [libsoundio](https://github.com/andrewrk/libsoundio)                 | MIT       | Wrapper for CoreAudio, WASAPI + more                                                            |
 | Vector graphics | [NanoVG](https://github.com/memononen/nanovg)                        | zlib      | Antialised 2D polygons, lines, text, gradients and images using OpenGL                          |
 | Vector graphics | [nanovg_compat](https://github.com/Tremus/nanovg_compat)             | zlib      | NanoVG wrapper with Metal & DirectX 11 backends and extra functions for initialising a context. |
+| Text Rendering  | [Freetype2](https://gitlab.freedesktop.org/freetype/freetype)        | FTL       | CPU rendering for most fonts for most devices.                                                  |
+| Text Shaping    | [kb](https://github.com/JimmyLefevre/kb)                             | zlib      | Multilingual text segmentation and shaping                                                      |
+| Memory          | [xhl](https://github.com/Tremus/xhl)                                 | Unlicense | Allocators with leak detectors. See `alloc.h`                                                   |
+| Maths           | [xhl](https://github.com/Tremus/xhl)                                 | Dual      | Fast maths approximations. See `maths.h`                                                        |
+| Time            | [xhl](https://github.com/Tremus/xhl)                                 | Unlicense | High res time, get OS time as unix timestamp, performance profiling tools. See `time.h`         |
 | Time            | [sokol](https://github.com/floooh/sokol)                             | zlib      | Get & parse high resolution time. See `sokol_time.h`                                            |
 | Image codecs    | [stb](https://github.com/nothings/stb)                               | MIT       | Load/decode many image formats. See `stb_image.h`, `stb_image_resize.h`, `stb_image_write.h`    |
 | Data containers | [stb](https://github.com/nothings/stb)                               | MIT       | Variable type dynamic arrays and hash maps. See `stb_ds.h`                                      |
@@ -49,9 +54,9 @@ The listed libraries and example code are generally biased towards:
 | Binary embed    | [bin2c](https://github.com/adobe/bin2c)                              | Apache 2  | CLI. Turns single file (eg. font, image) into `.c` containg `const char[]`.                     |
 | File dialog box | [osdialog](https://github.com/AndrewBelt/osdialog)                   | CC0       | Native select file/folder dialogue boxes, alerts, colour picker & more                          |
 | File dialog box | [tinyfiledialogs](https://sourceforge.net/projects/tinyfiledialogs/) | zlib      | Native select file/folder dialogue boxes, alerts, colour picker & more                          |
+| File I/O        | [xhl](https://github.com/Tremus/xhl)                                 | Unlicense | File r/w/a, paths eg. Desktop/Documents, list dir & watch file change events. UTF8. `files.h`   |
 | File searching  | [cute_headers](https://github.com/RandyGaul/cute_headers_deprecated) | Unlicense | Recursive file & directory search. See `cute_files.h`                                           |
 | File stream     | [sokol](https://github.com/floooh/sokol)                             | zlib      | Read & write stream for local files. See `sokol_fetch.h`                                        |
-| File I/O        | [xhl](https://github.com/Tremus/xhl)                                 | Unlicense | File read/write/append, get user Desktop/Documents etc, UTF8 paths. See `files.h`               |
 | TLS             | [cute_headers](https://github.com/RandyGaul/cute_headers)            | Unlicense | HTTPS request. Lacks any parsing of responses. See `cute_tls.h`                                 |
 | HTTPS           | [curl](https://github.com/curl/curl)                                 | BSD like  | Makes HTTPS requests                                                                            |
 | HTTP parsing    | [picohttpparser](https://github.com/h2o/picohttpparser)              | MIT       | Parses HTTP1 requests & responses                                                               |
