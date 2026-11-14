@@ -67,6 +67,7 @@ The listed libraries and example code are generally biased towards:
 | Regex           | [PCRE2](https://github.com/PCRE2Project/pcre2)                       | Dual      | Regex pattern matching                                                                          |
 | Regex           | [TRE](https://github.com/laurikari/tre)                              | BSD like  | Regex pattern matching but with a greater name                                                  |
 
+- [FM-1 Emulator](https://fm1-emulator.atst.tools/) - Free browser emulator for the M-VAVE FM-1 pocket synth; plays stock and 200+ community firmwares
 ## C++
 
 | Function           | Name                                                                         | License  | Description                                           |
